@@ -64,13 +64,18 @@ a:focus {
 
 .auto-renew {
   position: absolute;
-  top: 30px;
+  top: 24px;
   right: 10px;
   cursor: pointer;
+  opacity: 0.5;
 }
 
-.auto-renew.enable {
-  color: var(--vscode-textLink-activeForeground);
+.timestamp {
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  font-size: 0.8em;
+  opacity: 0.5;
 }
 
 .shortcut.charging {

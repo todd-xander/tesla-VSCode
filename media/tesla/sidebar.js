@@ -34,6 +34,7 @@ function toggleAutoRenew(ev) {
 function buildBasicInfo(infoView, vv) {
   let loc = "";
   let odo = "";
+  let ts = "";
   if (vv.state !== "asleep") {
     loc = `<a class='locIcon' title='Location' href='https://www.google.com/maps/search/?api=1&query=${vv.drive_state.corrected_latitude},${vv.drive_state.corrected_longitude}'>
             <span class="material-symbols-outlined">explore</span>
@@ -46,6 +47,9 @@ function buildBasicInfo(infoView, vv) {
               ${Math.floor(vv.vehicle_state.odometer * 1.609344 + 0.5)}km
             </vscode-badge>`;
     }
+    ts = `<span class='timestamp'>
+            ${new Date(vv.vehicle_state.timestamp).toLocaleString()}
+          </span>`;
   }
 
   let basicInfo = `
@@ -53,6 +57,7 @@ function buildBasicInfo(infoView, vv) {
   <div class='secondary'>
     <span class='model'>${vv.vehicle_config.car_type}</span>
     ${odo}
+    ${ts}
   </div>
   <img class='car-img' src='${vv.image}'/>`;
 
@@ -145,13 +150,38 @@ function buildShortcutView(shortcutView, vv) {
   }
 
   shortcutView.innerHTML = `
+        <vscode-divider></vscode-divider>
         <div class='shortcuts'>
           ${lockBtn}
           ${startupBtn}
           ${climateBtn}
           ${chargeBtn}
         </div>
+        <vscode-divider></vscode-divider>
         `;
+}
+
+function buildControlPanels(controlView, vv) {
+  if (vv.state == "asleep") {
+    return;
+  }
+  controlView.innerHTML = `
+    <vscode-panels>
+    <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span></vscode-panel-tab>
+    <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span></vscode-panel-tab>
+    <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span></vscode-panel-tab>
+    <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span></vscode-panel-tab>
+    <vscode-panel-tab title='JSON Response'><span class="material-symbols-outlined">data_object</span></vscode-panel-tab>
+    <vscode-panel-view></vscode-panel-view>
+    <vscode-panel-view></vscode-panel-view>
+    <vscode-panel-view></vscode-panel-view>
+    <vscode-panel-view></vscode-panel-view>
+    <vscode-panel-view><div id='json-response' style='height: calc(100vh - 450px); overflow: scroll;'></div></vscode-panel-view>
+    </vscode-panels>
+  `;
+
+  var detail = controlView.querySelector("#json-response");
+  detail.innerText = `${JSON.stringify(vv, null, 2)}`;
 }
 
 window.addEventListener("message", (event) => {
@@ -160,7 +190,6 @@ window.addEventListener("message", (event) => {
     case "vehicle": {
       var vv = message.data;
       var view = document.getElementById(vv.id_s);
-      var devider = document.createElement("vscode-divider");
       view.innerHTML = "";
 
       if (vv.state !== "asleep") {
@@ -179,38 +208,15 @@ window.addEventListener("message", (event) => {
       buildBasicInfo(infoView, vv);
       view.appendChild(infoView);
 
-      view.appendChild(devider.cloneNode(true));
-
       var shortcutView = document.createElement("div");
       shortcutView.classList.add("shortcut-view");
       buildShortcutView(shortcutView, vv);
       view.appendChild(shortcutView);
 
-      view.appendChild(devider.cloneNode(true));
-
       var controlView = document.createElement("div");
       controlView.classList.add("control-view");
-
-      controlView.innerHTML = `
-        <vscode-panels>
-        <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span></vscode-panel-tab>
-        <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span></vscode-panel-tab>
-        <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span></vscode-panel-tab>
-        <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span></vscode-panel-tab>
-        <vscode-panel-tab title='JSON Response'><span class="material-symbols-outlined">data_object</span></vscode-panel-tab>
-        <vscode-panel-view></vscode-panel-view>
-        <vscode-panel-view></vscode-panel-view>
-        <vscode-panel-view></vscode-panel-view>
-        <vscode-panel-view></vscode-panel-view>
-        <vscode-panel-view><div id='json-response' style='height: calc(100vh - 450px); overflow: scroll;'></div></vscode-panel-view>
-        </vscode-panels>
-      `;
-
+      buildControlPanels(controlView, vv);
       view.appendChild(controlView);
-      view.appendChild(devider);
-
-      var detail = controlView.querySelector("#json-response");
-      detail.innerText = `${JSON.stringify(vv, null, 2)}`;
 
       break;
     }
