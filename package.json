@@ -1,0 +1,98 @@
+{
+  "name": "tesla",
+  "displayName": "Tesla",
+  "publisher": "TaoZhang",
+  "description": "Control Ur Tesla in VS Code",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/todd-xander/tesla-VSCode"
+  },
+  "author": "Zhang Tao <tod.xander@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/todd-xander/tesla-VSCode/issues",
+    "email": "tod.xander@gmail.com"
+  },
+  "version": "0.1.0",
+  "icon": "media/tesla.png",
+  "engines": {
+    "vscode": "^1.57.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "Tesla"
+  ],
+  "activationEvents": [
+    "onView:tesla.view"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands":[
+      {
+        "command": "tesla.cmd.logout",
+        "category": "Tesla",
+        "title": "Logout",
+        "enablement": "view == tesla.view",
+        "when": "view == tesla.view",
+        "icon": "$(log-out)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "tesla.cmd.logout",
+          "when": "view == tesla.view",
+          "group": "navigation@0"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "tesla",
+          "title": "Tesla",
+          "icon": "media/tesla-t.svg"
+        }
+      ]
+    },
+    "views": {
+      "tesla": [
+        {
+          "type": "webview",
+          "id": "tesla.view",
+          "name": "Tesla"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "watch": "webpack --mode none --watch",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./"
+  },
+  "dependencies": {
+    "teslajs": "^4.10.0",
+    "bufferutil":"^4.0.6",
+    "utf-8-validate": "^5.0.2",
+    "util": "^0.12.4",
+    "ws": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^10.12.21",
+    "@types/teslajs": "^4.9.0",
+    "@types/vscode": "^1.57.1",
+    "@vscode/codicons": "0.0.20",
+    "@vscode/test-web": "^0.0.22",
+    "@vscode/webview-ui-toolkit": "^0.9.2",
+    "mocha": "^6.1.4",
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.3.1",
+    "webpack": "^5.44.0",
+    "webpack-cli": "^4.7.2"
+  }
+}

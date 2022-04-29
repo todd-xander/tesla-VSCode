@@ -1,0 +1,77 @@
+body {
+  padding: 0 5px;
+}
+a {
+  cursor: pointer;
+  text-decoration: none;
+}
+a:hover {
+  cursor: pointer;
+}
+a:focus {
+  outline: none;
+}
+.banner {
+  display: inline-flex;
+  margin: 10px 0;
+}
+
+.locIcon .material-symbols-outlined {
+  font-size: 0.7em;
+  margin: 0 8px;
+}
+.secondary .model {
+  font-weight: bold;
+}
+
+.secondary .vin {
+  font-weight: lighter;
+}
+
+.car-img {
+  margin: 0 auto;
+  display: block;
+}
+
+.state-info {
+  font-weight: bold;
+  font-size: 1em;
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+.state-info > span {
+  width: calc(33% - 2px);
+  display: inline-grid;
+}
+
+.shortcuts .shortcut {
+  width: calc(25% - 3px);
+  min-width: 48px;
+}
+
+@keyframes charging {
+  from {
+    background-color: var(--button-secondary-background);
+  }
+  50% {
+    background-color: var(--button-primary-background);
+  }
+  to {
+    background-color: var(--button-secondary-background);
+  }
+}
+
+.shortcut.charging {
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-name: charging;
+}
+
+vscode-link {
+  width:100%;
+  color: var(--vscode-editorWidget-foreground);
+}
+vscode-link:hover {
+  background-color: var(--button-icon-hover-background);
+}

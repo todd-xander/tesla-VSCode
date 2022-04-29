@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="572"
+   width="572"
+   viewBox="-38.0376 -63.1255 157.13755 270.80839"
+   version="1.1"
+   id="svg838"
+   sodipodi:docname="tesla-t.svg"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs842" />
+  <sodipodi:namedview
+     id="namedview840"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.95583333"
+     inkscape:cx="500.61029"
+     inkscape:cy="315.95467"
+     inkscape:window-width="1920"
+     inkscape:window-height="1027"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg838" />
+  <g
+     id="g926"
+     transform="matrix(1.0666957,0,0,1.0666957,21.893073,-5.5349828)">
+    <path
+       d="m 17.340769,198.51236 35.476,-199.5189986 c 33.815,0 44.481,3.708 46.021,18.8429996 0,0 22.684001,-8.4579996 34.125001,-25.6359996 C 88.316769,-28.487639 43.457769,-29.420639 43.457769,-29.420639 l -26.176,31.8820004 0.059,-0.004 -26.1759996,-31.8830004 c 0,0 -44.8600004,0.934 -89.5000004,21.6220004 11.431,17.178 34.124,25.6359996 34.124,25.6359996 1.549,-15.1359996 12.202,-18.8439996 45.79,-18.8679996 l 35.762,199.5479986"
+       id="path834" />
+    <path
+       d="m 17.326769,-38.629639 c 36.09,-0.276 77.399,5.583 119.687001,24.014 5.652,-10.173 7.105,-14.669 7.105,-14.669 -46.227001,-18.289 -89.518001,-24.548 -126.797001,-24.705 -37.277,0.157 -80.566,6.417 -126.786999,24.705 0,0 2.062,5.538 7.1,14.669 42.279999,-18.431 83.595999,-24.29 119.686999,-24.014 h 0.005"
+       id="path836" />
+  </g>
+</svg>
