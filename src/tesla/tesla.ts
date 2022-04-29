@@ -106,7 +106,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
               location: { viewId: TeslaSidebarProvider.viewType },
               title: 'Tesla',
             },
-            (progress, token) => {
+            async (progress, _token) => {
               if (this.token) {
                 let option: tjs.optionsType = { authToken: this.token, vehicleID: data.vid };
                 return tjs.wakeUpAsync(option).then(async (value) => {
@@ -117,7 +117,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
                       v = data;
                     });
                   }
-                  this.getVehicleInfo(v.id_s as string, v).then((info) => {
+                  this.getVehicleInfo(data.vid as string, v).then((info) => {
                     progress.report({ increment: 100 });
                     vscode.window.showInformationMessage(
                       `Vehicle ${v.display_name} waked up.`,
@@ -134,6 +134,21 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
               }
             },
           );
+          break;
+        }
+        case 'update': {
+          if (this.token) {
+            let option: tjs.optionsType = { authToken: this.token, vehicleID: data.vid };
+            tjs.vehicleAsync(option).then(async (value) => {
+              this.getVehicleInfo(data.vid as string, value as tjs.Vehicle).then((info) => {
+                this.view?.postMessage({
+                  command: 'update',
+                  data: info
+                });
+              });
+            });
+          }
+          break;
         }
       }
     });
