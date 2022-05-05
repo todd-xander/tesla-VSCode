@@ -20,13 +20,6 @@ a:focus {
   font-size: 0.7em;
   margin: 0 8px;
 }
-.secondary .model {
-  font-weight: bold;
-}
-
-.secondary .vin {
-  font-weight: lighter;
-}
 
 .car-img {
   margin: 0 auto;
@@ -48,6 +41,7 @@ a:focus {
 .shortcuts .shortcut {
   width: calc(25% - 3px);
   min-width: 48px;
+  margin: 2px 0;
 }
 
 @keyframes charging {
@@ -64,7 +58,7 @@ a:focus {
 
 .auto-renew {
   position: absolute;
-  top: 24px;
+  top: 14px;
   right: 10px;
   cursor: pointer;
   opacity: 0.5;
@@ -72,8 +66,8 @@ a:focus {
 
 .timestamp {
   position: absolute;
-  right: 10px;
-  top: 40px;
+  right: 3px;
+  top: 32px;
   font-size: 0.8em;
   opacity: 0.5;
 }
@@ -84,8 +78,78 @@ a:focus {
   animation-name: charging;
 }
 
+.main {
+  height: 100vh;
+}
+
+.main > vscode-panel-view {
+  padding: 0 5px;
+}
+
+.view-grid {
+  display: grid;
+  width: calc(100vw - 24px);
+  height: calc(100vh - 40px);
+  grid-template-rows: max-content max-content auto max-content;
+}
+
+.control-view vscode-panel-view {
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+}
+.flex-view {
+  overflow: auto;
+  grid-template-columns: max-content !important;
+}
+
+.footer-grid vscode-data-grid-cell {
+  font-size: 0.8em;
+  font-family: var(--vscode-editor-font-family);
+  opacity: 0.6;
+}
+.update {
+  display: inline-flex;
+  align-items: center;
+  margin: 4px 0 0 0;
+}
+.update > span {
+  background-color: var(--button-primary-background);
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.update .progressbar {
+  margin-left: -4px;
+  width: 100%;
+  background-color: var(--button-secondary-background);
+  background-color: transparent;
+  border-radius: 5px;
+  padding: 0;
+}
+
+.update .progressbar > div {
+  background-color: var(--button-primary-background);
+  height: 10px;
+  border-radius: 5px;
+}
+vscode-data-grid-row:hover,
+vscode-data-grid-row:active,
+vscode-data-grid-row:focus,
+vscode-data-grid-cell:hover,
+vscode-data-grid-cell:active,
+vscode-data-grid-cell:focus {
+  background: none;
+  outline: none;
+  border-color: transparent;
+}
+vscode-data-grid-cell {
+  padding: 0;
+  margin: 0;
+}
+
 vscode-link {
-  width:100%;
+  width: 100%;
   color: var(--vscode-editorWidget-foreground);
 }
 vscode-link:hover {

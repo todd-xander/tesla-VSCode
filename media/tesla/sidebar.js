@@ -41,7 +41,20 @@ function buildBasicInfo(infoView, vv) {
   let odo = "";
   let ts = "";
   if (vv.state !== "asleep") {
-    loc = `<a class='locIcon' title='Location' href='https://www.google.com/maps/search/?api=1&query=${vv.drive_state.corrected_latitude},${vv.drive_state.corrected_longitude}'>
+    let tip = "Location: ";
+    let lat = vv.drive_state.corrected_latitude;
+    if (lat >= 0) {
+      tip += `${lat}N`;
+    } else {
+      tip += `${lat * -1}S`;
+    }
+    let lng = vv.drive_state.corrected_longitude;
+    if (lat >= 0) {
+      tip += `,${lng}E`;
+    } else {
+      tip += `,${lng * -1}W`;
+    }
+    loc = `<a class='locIcon' title='${tip}' href='https://www.google.com/maps/search/?api=1&query=${vv.drive_state.corrected_latitude},${vv.drive_state.corrected_longitude}'>
             <span class="material-symbols-outlined">explore</span>
           </a>`;
     odo = `<vscode-badge class='odometer'>
@@ -59,11 +72,7 @@ function buildBasicInfo(infoView, vv) {
 
   let basicInfo = `
   <h1 class='banner'>${vv.display_name}${loc}</h1>
-  <div class='secondary'>
-    <span class='model'>${vv.vehicle_config.car_type}</span>
-    ${odo}
-    ${ts}
-  </div>
+  ${ts}
   <img class='car-img' src='${vv.image}'/>`;
 
   if (vv.state == "asleep") {
@@ -116,35 +125,35 @@ function buildShortcutView(shortcutView, vv) {
     return;
   }
   let lockBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Unlocked'><span class='material-symbols-outlined'>lock_open</span></vscode-button>";
+    "<vscode-button class='shortcut' title='Unlocked'><span class='material-symbols-outlined'>lock_open</span></vscode-button>";
   if (vv.vehicle_state.locked) {
     lockBtn =
-      "<vscode-button class='shortcut' title='Locked'><span class='material-symbols-outlined'>lock</span></vscode-button>";
+      "<vscode-button class='shortcut' appearance='secondary' title='Locked'><span class='material-symbols-outlined'>lock</span></vscode-button>";
   }
 
   let startupBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Standby'><span class='material-symbols-outlined'>car_rental</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Standby'><span class='material-symbols-outlined'>vpn_key</span></vscode-button>";
   if (vv.vehicle_state.remote_start) {
     startupBtn =
-      "<vscode-button class='shortcut' title='Startup'><span class='material-symbols-outlined'>car_rental</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Startup'><span class='material-symbols-outlined'>vpn_key</span></vscode-button>";
   }
 
   let climateBtn =
     "<vscode-button class='shortcut' appearance='secondary' title='Climate Off'><span class='material-symbols-outlined'>mode_fan_off</span></vscode-button>";
   if (vv.climate_state.is_climate_on) {
     climateBtn =
-      "<vscode-button class='shortcut' title='Climate On'><span class='material-symbols-outlined'>air</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Climate On'><span class='material-symbols-outlined'>mode_fan</span></vscode-button>";
   }
 
   let chargeBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Charger Disconnected'><span class='material-symbols-outlined'>power_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Charger Disconnected'><span class='material-symbols-outlined'>outlet</span></vscode-button>";
   if (
     vv.charge_state.charge_port_door_open &&
     vv.charge_state.charge_port_latch === "Engaged"
   ) {
     if (vv.charge_state.charging_state === "Stopped") {
       chargeBtn =
-        "<vscode-button class='shortcut' appearance='secondary' title='Charge Stopped'><span class='material-symbols-outlined'>bolt</span></vscode-button>";
+        "<vscode-button class='shortcut' appearance='secondary' title='Charge Stopped'><span class='material-symbols-outlined'>electrical_services</span></vscode-button>";
     } else if (vv.charge_state.charging_state === "Complete") {
       chargeBtn =
         "<vscode-button class='shortcut' title='Charge Complete'><span class='material-symbols-outlined'>bolt</span></vscode-button>";
@@ -154,13 +163,41 @@ function buildShortcutView(shortcutView, vv) {
     }
   }
 
+  let hornBtn =
+    "<vscode-button class='shortcut' appearance='secondary' title='Honk Horn'><span class='material-symbols-outlined'>volume_up</span></vscode-button>";
+  let falshBtn =
+    "<vscode-button class='shortcut' appearance='secondary' title='Flash Headlights'><span class='material-symbols-outlined'>online_prediction</span></vscode-button>";
+  let defrost =
+    "<vscode-button class='shortcut' appearance='secondary' title='Defrost'><span class='material-symbols-outlined'>mode_cool_off</span></vscode-button>";
+  if (vv.climate_state.defrost_mode == 1) {
+    defrost =
+      "<vscode-button class='shortcut' title='Defrost'><span class='material-symbols-outlined'>mode_cool</span></vscode-button>";
+  }
+
+  let frunk =
+    "<vscode-button class='shortcut' appearance='secondary' title='Open Frunk'><span class='material-symbols-outlined'>backpack</span></vscode-button>";
+  if (vv.vehicle_state.ft !== 0) {
+    frunk =
+      "<vscode-button class='shortcut' title='Frunk Opened'><span class='material-symbols-outlined'>backpack</span></vscode-button>";
+  }
+  let trunk =
+    "<vscode-button class='shortcut' appearance='secondary' title='Open Trunk'><span class='material-symbols-outlined'>luggage</span></vscode-button>";
+  if (vv.vehicle_state.rt !== 0) {
+    trunk =
+      "<vscode-button class='shortcut' title='Trunk Opened'><span class='material-symbols-outlined'>luggage</span></vscode-button>";
+  }
+
   shortcutView.innerHTML = `
         <vscode-divider></vscode-divider>
         <div class='shortcuts'>
           ${lockBtn}
-          ${startupBtn}
           ${climateBtn}
+          ${defrost}
           ${chargeBtn}
+          ${hornBtn}
+          ${falshBtn}
+          ${frunk}
+          ${trunk}
         </div>
         <vscode-divider></vscode-divider>
         `;
@@ -170,10 +207,11 @@ function buildControlPanels(controlView, vv) {
   if (vv.state == "asleep") {
     return;
   }
+
   controlView.innerHTML = `
     <vscode-panels>
     <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span></vscode-panel-tab>
-    <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span></vscode-panel-tab>
+    <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">airware</span></vscode-panel-tab>
     <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span></vscode-panel-tab>
     <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span></vscode-panel-tab>
     <vscode-panel-tab title='JSON Response'><span class="material-symbols-outlined">data_object</span></vscode-panel-tab>
@@ -181,12 +219,63 @@ function buildControlPanels(controlView, vv) {
     <vscode-panel-view></vscode-panel-view>
     <vscode-panel-view></vscode-panel-view>
     <vscode-panel-view></vscode-panel-view>
-    <vscode-panel-view><div id='json-response' style='height: calc(100vh - 450px); overflow: scroll;'></div></vscode-panel-view>
+    <vscode-panel-view><div class='json-response'></div></vscode-panel-view>
     </vscode-panels>
   `;
 
-  var detail = controlView.querySelector("#json-response");
+  var detail = controlView.querySelector(".json-response");
   detail.innerText = `${JSON.stringify(vv, null, 2)}`;
+}
+
+function buildFooter(footerView, vv) {
+  if (vv.state == "asleep") {
+    return;
+  }
+  let car_type = vv.vehicle_config.car_type;
+  car_type = car_type.toUpperCase();
+
+  let odo = ` ${Math.floor(vv.vehicle_state.odometer + 0.5)}mi`;
+  if (vv.gui_settings.gui_distance_units === "km/hr") {
+    odo = `${Math.floor(vv.vehicle_state.odometer * 1.609344 + 0.5)}km`;
+  }
+  let update = "";
+  if (vv.vehicle_state.software_update.status === "available") {
+    update = `<div class='update'><span title='Update available" class="material-symbols-outlined">
+                download_for_offline
+              </span>
+              </div>`;
+  } else if (vv.vehicle_state.software_update.status === "scheduled") {
+    update = `<div class='update'>
+              <span class="material-symbols-outlined">
+                download_for_offline
+              </span>
+              <div class="progressbar" title='Update downloading: ${vv.vehicle_state.software_update.download_perc}%'>
+                <div style="width:${vv.vehicle_state.software_update.download_perc}%"></div>
+              </div>
+              </div>`;
+  } else if (vv.vehicle_state.software_update.status === "installing") {
+    update = `<div class='update'>
+              <span class="material-symbols-outlined">
+                build_circle
+              </span>
+              <div class="progressbar" title='Update installing: ${vv.vehicle_state.software_update.install_perc}%'>
+                <div style="width:${vv.vehicle_state.software_update.install_perc}%"></div>
+              </div>
+              </div>`;
+  }
+  footerView.innerHTML = `
+      <vscode-divider></vscode-divider>
+      <vscode-data-grid-row>
+        <vscode-data-grid-cell grid-column="1">${car_type} ${odo}</vscode-data-grid-cell>
+      </vscode-data-grid-row>
+      <vscode-data-grid-row>
+        <vscode-data-grid-cell grid-column="1">VIN: ${vv.vin}</vscode-data-grid-cell>
+      </vscode-data-grid-row>
+      <vscode-data-grid-row>
+        <vscode-data-grid-cell grid-column="1">VER: ${vv.vehicle_state.car_version}</vscode-data-grid-cell>
+      </vscode-data-grid-row>
+      ${update}
+  `;
 }
 
 window.addEventListener("message", (event) => {
@@ -197,9 +286,21 @@ window.addEventListener("message", (event) => {
       var view = document.getElementById(vv.id_s);
       stopPollingVehicleState(vv.id_s);
 
-      view.innerHTML = "";
+      view.innerHTML = `<vscode-data-grid class="view-grid" generate-header="none" aria-label="No Header">
+          <vscode-data-grid-row>
+            <vscode-data-grid-cell grid-column="1" class="info-view"></vscode-data-grid-cell>
+          </vscode-data-grid-row>
+          <vscode-data-grid-row>
+            <vscode-data-grid-cell grid-column="1" class="shortcut-view"></vscode-data-grid-cell>
+          </vscode-data-grid-row>
+          <vscode-data-grid-row class="flex-view">
+            <vscode-data-grid-cell grid-column="1" class="control-view"></vscode-data-grid-cell>
+          </vscode-data-grid-row>
+          <vscode-data-grid-row class="footer-grid">
+          </vscode-data-grid-row>
+        </vscode-data-grid>`;
       if (vv.state !== "asleep") {
-        view.innerHTML = `<div title="Auto Renew"
+        view.innerHTML += `<div title="Auto Renew"
                                 data-vid="${vv.id_s}"
                                 class="auto-renew"
                                 onclick='toggleAutoRenew(event)'>
@@ -209,20 +310,17 @@ window.addEventListener("message", (event) => {
                           </div>`;
       }
 
-      var infoView = document.createElement("div");
-      infoView.classList.add("info-view");
+      var infoView = view.querySelector(".info-view");
       buildBasicInfo(infoView, vv);
-      view.appendChild(infoView);
 
-      var shortcutView = document.createElement("div");
-      shortcutView.classList.add("shortcut-view");
+      var shortcutView = view.querySelector(".shortcut-view");
       buildShortcutView(shortcutView, vv);
-      view.appendChild(shortcutView);
 
-      var controlView = document.createElement("div");
-      controlView.classList.add("control-view");
+      var controlView = view.querySelector(".control-view");
       buildControlPanels(controlView, vv);
-      view.appendChild(controlView);
+
+      var footerView = view.querySelector(".footer-grid");
+      buildFooter(footerView, vv);
 
       break;
     }
@@ -235,6 +333,9 @@ window.addEventListener("message", (event) => {
 
       var shortcutView = view.querySelector(".shortcut-view");
       buildShortcutView(shortcutView, vv);
+
+      var footerView = view.querySelector(".footer-grid");
+      buildFooter(footerView, vv);
 
       break;
     }
