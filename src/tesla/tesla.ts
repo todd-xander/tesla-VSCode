@@ -65,16 +65,37 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
       vehicleID: vid,
     };
 
+    let opcodes = vehicle.option_codes as string;
+    let model = '';
+    let view = 'STUD_SIDE';
+    let cs = opcodes.split(',').filter((v, i, arr) => {
+      if (v === 'MDLS' || v === 'MS03' || v === 'MS04') {
+        model = 'ms';
+      }
+      if (v === 'MDLX') {
+        model = 'mx';
+      }
+      if (v === 'MDL3') {
+        model = 'm3';
+      }
+      if (v === 'MDLY') {
+        model = 'my';
+        view = 'SIDE';
+      }
+      return v.startsWith('W') || v.match(/PP[A-Z]*/) || v.startsWith('SLR') || v.startsWith('DV') || v.startsWith('IN') || v.startsWith('MT') || v.startsWith('MI');
+    }).map((v, i, arr) => {
+      return `$${v}`;
+    }).join(',');
+    const image = `https://static-assets.tesla.com/configurator/compositor?&options=${cs}&view=STUD_SIDE&model=${model}&size=400&bkba_opt=1`;
+
     if (vehicle.state === 'asleep') {
       return new Promise<Object>((resolve, reject) => {
-        const imgUri = this.view?.asWebviewUri(vscode.Uri.joinPath(this.extension.extensionUri, 'media', 'cars.png'));
-        let vd = { vehicle_config: { car_type: tjs.getModel(vehicle) }, image: imgUri ? `https://file%2B.vscode-resource.vscode-webview.net/${imgUri.fsPath.replace(':', '%3A')}` : "" };
+        let vd = { vehicle_config: { car_type: tjs.getModel(vehicle) }, image };
         resolve(Object.assign(vd, vehicle));
       });
     } else {
       return tjs.vehicleDataAsync(option).then(v => {
-        const imgUri = this.view?.asWebviewUri(vscode.Uri.joinPath(this.extension.extensionUri, 'media', 'cars.png'));
-        let vd = { image: imgUri ? `https://file%2B.vscode-resource.vscode-webview.net/${imgUri.fsPath.replace(':', '%3A')}` : "" };
+        let vd = { image };
         let vv = Object.assign(vd, v);
         return vv;
       });
@@ -199,7 +220,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this.view.cspSource}; font-src ${this.view.cspSource};  style-src ${this.view.cspSource} 'unsafe-inline'; script-src ${this.view.cspSource} 'unsafe-inline';" >
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this.view.cspSource} https://*.tesla.com; font-src ${this.view.cspSource};  style-src ${this.view.cspSource} 'unsafe-inline'; script-src ${this.view.cspSource} 'unsafe-inline';" >
       <link href="${cssUri}" rel="stylesheet"/>
       <script type="module" src="${toolkitUri}"></script>
       <script src="${eventHandler}"></script>
@@ -286,7 +307,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
             this.view.html = `<!DOCTYPE html>
             <html lang="en">
             <head>
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this.view.cspSource}; font-src ${this.view.cspSource};  style-src ${this.view.cspSource} 'unsafe-inline'; script-src ${this.view.cspSource} 'unsafe-inline';" >
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this.view.cspSource} https://*.tesla.com; font-src ${this.view.cspSource};  style-src ${this.view.cspSource} 'unsafe-inline'; script-src ${this.view.cspSource} 'unsafe-inline';" >
             <link href="${meterialSymbolsUri}" rel="stylesheet" />
             <link href="${cssUri}" rel="stylesheet" />
             <script type="module" src="${toolkitUri}"></script>

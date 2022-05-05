@@ -1,6 +1,11 @@
 let poll = {};
 
 function startPollingVehicleState(vid, interval) {
+  stopPollingVehicleState(vid);
+  vscode.postMessage({
+    command: "update",
+    vid: vid,
+  });
   let p = setInterval(() => {
     vscode.postMessage({
       command: "update",
@@ -190,8 +195,9 @@ window.addEventListener("message", (event) => {
     case "vehicle": {
       var vv = message.data;
       var view = document.getElementById(vv.id_s);
-      view.innerHTML = "";
+      stopPollingVehicleState(vv.id_s);
 
+      view.innerHTML = "";
       if (vv.state !== "asleep") {
         view.innerHTML = `<div title="Auto Renew"
                                 data-vid="${vv.id_s}"
