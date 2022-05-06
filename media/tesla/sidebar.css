@@ -16,6 +16,10 @@ a:focus {
   margin: 10px 0;
 }
 
+.locIcon {
+  color: var(--progress-background);
+}
+
 .locIcon .material-symbols-outlined {
   font-size: 0.7em;
   margin: 0 8px;
@@ -25,7 +29,21 @@ a:focus {
   margin: 0 auto;
   display: block;
 }
-
+.drive-info {
+  font-family: var(--vscode-editor-font-family);
+  font-size: 1em;
+  line-height: 1em;
+  font-weight: bold;
+  margin-bottom: -1em;
+}
+.drive-info .shift-state {
+  margin: 2px;
+  color: var(--progress-background);
+  opacity: 0.5;
+}
+.drive-info .shift-state.enable {
+  opacity: 1;
+}
 .state-info {
   font-weight: bold;
   font-size: 1em;
@@ -114,24 +132,22 @@ a:focus {
   margin: 4px 0 0 0;
 }
 .update > span {
-  background-color: var(--button-primary-background);
+  background-color: var(--progress-background);
   padding: 4px;
   border-radius: 50%;
   cursor: pointer;
 }
 .update .progressbar {
-  margin-left: -4px;
+  margin-left: -2px;
   width: 100%;
-  background-color: var(--button-secondary-background);
   background-color: transparent;
-  border-radius: 5px;
+  border-right: 3px solid var(--progress-background);
   padding: 0;
 }
 
 .update .progressbar > div {
-  background-color: var(--button-primary-background);
+  background-color: var(--progress-background);
   height: 10px;
-  border-radius: 5px;
 }
 vscode-data-grid-row:hover,
 vscode-data-grid-row:active,
@@ -146,12 +162,4 @@ vscode-data-grid-cell:focus {
 vscode-data-grid-cell {
   padding: 0;
   margin: 0;
-}
-
-vscode-link {
-  width: 100%;
-  color: var(--vscode-editorWidget-foreground);
-}
-vscode-link:hover {
-  background-color: var(--button-icon-hover-background);
 }
