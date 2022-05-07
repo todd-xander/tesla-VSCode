@@ -238,7 +238,7 @@ function buildControlPanels(controlView, vv) {
     <vscode-panel-view></vscode-panel-view>
     <vscode-panel-view></vscode-panel-view>
     <vscode-panel-view></vscode-panel-view>
-    <vscode-panel-view><div class='json-response'></div></vscode-panel-view>
+    <vscode-panel-view><div class='json-response' style='user-select: text;'></div></vscode-panel-view>
     </vscode-panels>
   `;
 
