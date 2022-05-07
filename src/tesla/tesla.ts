@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as tjs from 'teslajs';
+import * as auth from './auth';
 
 function getTeslaToken(
   extension: vscode.ExtensionContext,
@@ -13,19 +14,6 @@ function getTeslaToken(
       }
     });
   });
-}
-
-interface VehicleInfo {
-  id: string;
-  info: {
-    vin: string,
-    name: string,
-    model: string,
-    color: string,
-  };
-  state?: object;
-  climate?: object;
-  charge?: object;
 }
 
 export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
@@ -47,14 +35,24 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
 
   constructor(private readonly _context: vscode.ExtensionContext) {
     this.extension = _context;
+    vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', true);
     getTeslaToken(_context).then((token) => {
       this.token = token;
     });
     _context.subscriptions.push(
-      vscode.commands.registerCommand('tesla.cmd.logout', async () => {
-        await _context.secrets.delete('Tesla.token');
-        this.token = undefined;
-        this.showView();
+      vscode.commands.registerCommand('tesla.cmd.froze', () => {
+        vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', true);
+        this.showView(true);
+      }),
+    );
+    _context.subscriptions.push(
+      vscode.commands.registerCommand('tesla.cmd.logout', () => {
+        _context.secrets.delete('Tesla.token').then(() => {
+          this.token = undefined;
+          vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', true);
+          this.showUseGuide();
+        });
+
       }),
     );
   }
@@ -357,6 +355,11 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
           );
           break;
         }
+        case 'unfreeze': {
+          vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', false);
+          this.showView(false);
+          break;
+        }
         case 'update': {
           if (this.token) {
             let option: tjs.optionsType = { authToken: this.token, vehicleID: data.vid };
@@ -374,7 +377,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
       }
     });
 
-    this.showView();
+    this.showView(true);
   }
 
   private showUseGuide() {
@@ -384,7 +387,21 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     this.view.onDidReceiveMessage((data) => {
       switch (data.command) {
         case 'login': {
-          this.login();
+          auth.loginPage(data.email).then((resp) => {
+            this.view?.postMessage({ command: 'login-url', url: resp.url, verifier: resp.verifier });
+          });
+          break;
+        }
+        case 'verify': {
+          auth.getToken({ url: data.url, verifier: data.verifier }).then((value) => {
+            let token = value.data.access_token;
+            this.extension.secrets.delete('Tesla.token');
+            this.extension.secrets.store('Tesla.token', token).then(() => {
+              this.token = token;
+              vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', false);
+              this.showView(false);
+            });
+          });
           break;
         }
       }
@@ -397,14 +414,6 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
         'sidebar.css',
       ),
     );
-    const eventHandler = this.view.asWebviewUri(
-      vscode.Uri.joinPath(
-        this.extension.extensionUri,
-        'media',
-        'common',
-        'eventHandler.js',
-      ),
-    );
     const toolkitUri = this.view.asWebviewUri(
       vscode.Uri.joinPath(
         this.extension.extensionUri,
@@ -414,7 +423,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
       ),
     );
 
-    const imgUri = this.view.asWebviewUri(vscode.Uri.joinPath(this.extension.extensionUri, 'media', 'cars.png'));
+    const logo = this.view.asWebviewUri(vscode.Uri.joinPath(this.extension.extensionUri, 'media', 'tesla-t.svg'));
     this.view.html = `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -423,16 +432,125 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
       <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this.view.cspSource} https://*.tesla.com; font-src ${this.view.cspSource};  style-src ${this.view.cspSource} 'unsafe-inline'; script-src ${this.view.cspSource} 'unsafe-inline';" >
       <link href="${cssUri}" rel="stylesheet"/>
       <script type="module" src="${toolkitUri}"></script>
-      <script src="${eventHandler}"></script>
+      <style>
+       body {
+          height:100vh;
+          padding: 0 8px;
+       }
+       #logo {
+          width: 100px;
+          margin: 0 auto 40px auto;
+          display: flex;
+          filter: contrast(0.1);
+       }
+       #email, #url {
+          width: 100%;
+       }
+       #tip {
+          margin: 16px auto;
+       }
+       #tip.disabled {
+          opacity: var(--disabled-opacity);
+       }
+       #tip.disabled #login-url {
+          background-color: gray;
+          cursor: default;
+       }
+       #login-url {
+          border-radius: 50%;
+          padding: 4px;
+          background-color: red;
+          cursor: pointer;
+       }
+       #tip img {
+          width: 18px;
+          margin-bottom: -6px;
+       }
+       #reset, #verify {
+          display: inline-flex;
+          width: calc(50% - 2px);
+          margin-top: 20px;
+       }
+      </style>
     </head>
     <body>
-      <img class='car-img' src='${imgUri}'/>
-      <vscode-button title='Login Tesla' data-command='login' style='width:100%'>Login</vscode-button>
+      <div style='margin: 0 auto; padding-top: 50px; max-width: 260px;'>
+        <img id='logo' src='${logo}'>
+        <vscode-text-field type="email" id="email" name="email" placeholder="Tesla Account Email" onchange='login(event)'>1. Input account email</vscode-text-field>
+        <div id='tip' class='disabled'>
+        2. Login from 
+        <a id='login-url'>
+          <img src='${logo}'>
+        </a>
+        </div>
+        <vscode-text-field type="url" id="url" name="url" placeholder="Tesla Verification URL" oninput='urlcheck(event)' disabled>3. Paste returned URL</vscode-text-field>
+        <vscode-button title='Reset' appearance="secondary" id='reset' onclick='reset(event)' disabled>Reset</vscode-button>
+        <vscode-button title='Verify Account' id='verify' onclick='verify(event)' disabled>Login</vscode-button>
+      </div>
+      <script>
+        const vscode = acquireVsCodeApi();
+        function login(ev) {
+          var account = document.getElementById("email");
+          vscode.postMessage({command: 'login', email: account.value});
+        }
+        function reset(event) {
+          var account = document.getElementById("email");
+          var tip = document.getElementById("tip");
+          var url_tip = document.getElementById("login-url");
+          var url = document.getElementById("url");
+          var reset_btn = document.getElementById("reset");
+          var verify_btn = document.getElementById("verify");
+          account.value = '';
+          account.disabled = false;
+          url.value = '';
+          url.disabled = true;
+          url.dataset.verifier = undefined;
+          tip.classList.add('disabled');
+          reset_btn.disabled = true;
+          verify_btn.disabled = true;
+        }
+        function urlcheck(ev) {
+          var url = document.getElementById("url");
+          var verify_btn = document.getElementById("verify");
+          if (!url.dataset.verifier) {
+            verify_btn.disabled = true;
+            return;
+          }
+          if (url.value) {
+            verify_btn.disabled = false;
+          } else {
+            verify_btn.disabled = true;
+          }
+        }
+        function verify(ev) {
+          var url = document.getElementById("url");
+          vscode.postMessage({command: 'verify', url: url.value, verifier: url.dataset.verifier});
+        }
+        window.addEventListener("message", (event) => {
+          const message = event.data;
+          switch (message.command) {
+            case "login-url": {
+              var account = document.getElementById("email");
+              var tip = document.getElementById("tip");
+              var url_tip = document.getElementById("login-url");
+              var url = document.getElementById("url");
+              var reset_btn = document.getElementById("reset");
+              url.dataset.verifier = message.verifier;
+              account.disabled = true;
+              url.disabled = false;
+              url_tip.href = message.url;
+              tip.classList.remove('disabled');
+              reset_btn.disabled = false;
+              break;
+            }
+          }
+        });
+      </script>
     </body>
     </html>`;
   }
 
-  private async showView() {
+  private async showView(froze: boolean) {
     if (!this.view) {
       return;
     }
@@ -477,6 +595,13 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
         'eventHandler.js',
       ),
     );
+    const logo = this.view.asWebviewUri(
+      vscode.Uri.joinPath(
+        this.extension.extensionUri,
+        'media',
+        'tesla-t.svg',
+      ),
+    );
 
     if (!this.token) {
       this.showUseGuide();
@@ -491,6 +616,27 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
           this.showUseGuide();
         } else {
           if (!this.view) {
+            return;
+          } else if (froze) {
+            this.view.html = `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this.view.cspSource} https://*.tesla.com; font-src ${this.view.cspSource};  style-src ${this.view.cspSource} 'unsafe-inline'; script-src ${this.view.cspSource} 'unsafe-inline';" >
+            <link href="${meterialSymbolsUri}" rel="stylesheet" />
+            <link href="${cssUri}" rel="stylesheet" />
+            <script type="module" src="${toolkitUri}"></script>
+            <script src="${eventHandler}"></script>
+            <script src="${jsUri}"></script>
+            </head>
+            <body>
+              <div style='height:100vh; padding: 0 8px'>
+                <div>
+                  <img src='${logo}' style='width: 100px; margin: 0 auto 20px auto; padding-top: calc(50% - 50px); display: flex; filter: contrast(0.1);'>
+                </div>
+                <vscode-button title='Unfreeze' data-command='unfreeze' class='big'>Unfreeze</vscode-button>
+              </div>
+            </body>
+            </html>`;
             return;
           } else {
             let vehicleTab = '';
@@ -533,32 +679,49 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     );
   }
 
-  private login(): Promise<string | undefined> {
+  private login(email: string): Promise<string | undefined> {
     return new Promise<string | undefined>((resolve, reject) => {
-      vscode.window
-        .showInputBox({
-          placeHolder: 'Tesla Token',
-        })
-        .then((token) => {
-          if (!token) {
-            return resolve(undefined);
-          }
-          let ml = this;
-          tjs.products({ authToken: token, vehicleID: '' }, (err, data) => {
-            if (err) {
-              vscode.window.showErrorMessage(err.message);
-              ml.token = undefined;
-              reject();
-            } else {
-              ml.extension.secrets.delete('Tesla.token');
-              ml.extension.secrets.store('Tesla.token', token).then(() => {
-                ml.token = token;
-                ml.showView();
+      auth.loginPage(email).then((resp) => {
+        vscode.window.showInformationMessage(resp.url);
+        vscode.window.showInputBox({ ignoreFocusOut: true, prompt: `Login from Tesla, and paste returned URL here.` }).then(v => {
+          if (v) {
+            resp.url = v;
+            auth.getToken(resp).then((value) => {
+              let token = value.data.access_token;
+              this.extension.secrets.delete('Tesla.token');
+              this.extension.secrets.store('Tesla.token', token).then(() => {
+                this.token = token;
+                vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', false);
+                this.showView(false);
                 resolve(token);
               });
-            }
-          });
+            });
+          }
         });
+      });
+    });
+  }
+
+  private verify(email: string): Promise<string | undefined> {
+    return new Promise<string | undefined>((resolve, reject) => {
+      auth.loginPage(email).then((resp) => {
+        vscode.window.showInformationMessage(resp.url);
+        vscode.window.showInputBox({ ignoreFocusOut: true, prompt: `Login from Tesla, and paste returned URL here.` }).then(v => {
+          if (v) {
+            resp.url = v;
+            auth.getToken(resp).then((value) => {
+              let token = value.data.access_token;
+              this.extension.secrets.delete('Tesla.token');
+              this.extension.secrets.store('Tesla.token', token).then(() => {
+                this.token = token;
+                vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', false);
+                this.showView(false);
+                resolve(token);
+              });
+            });
+          }
+        });
+      });
     });
   }
 }

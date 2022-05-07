@@ -31,10 +31,18 @@
   "contributes": {
     "commands":[
       {
+        "command": "tesla.cmd.froze",
+        "category": "Tesla",
+        "title": "Froze Window",
+        "enablement": "view == tesla.view",
+        "when": "view == tesla.view && !tesla.ctx.frozen",
+        "icon": "$(eye-closed)"
+      },
+      {
         "command": "tesla.cmd.logout",
         "category": "Tesla",
         "title": "Logout",
-        "enablement": "view == tesla.view",
+        "enablement": "view == tesla.view && !tesla.ctx.frozen",
         "when": "view == tesla.view",
         "icon": "$(log-out)"
       }
@@ -42,9 +50,14 @@
     "menus": {
       "view/title": [
         {
-          "command": "tesla.cmd.logout",
-          "when": "view == tesla.view",
+          "command": "tesla.cmd.froze",
+          "when": "view == tesla.view && !tesla.ctx.frozen",
           "group": "navigation@0"
+        },
+        {
+          "command": "tesla.cmd.logout",
+          "when": "view == tesla.view && !tesla.ctx.frozen",
+          "group": "navigation@1"
         }
       ]
     },
@@ -75,6 +88,8 @@
     "test-compile": "tsc -p ./"
   },
   "dependencies": {
+    "axios": "^0.21.4",
+    "crypto": "^1.0.1",
     "teslajs": "^4.10.0",
     "bufferutil":"^4.0.6",
     "utf-8-validate": "^5.0.2",

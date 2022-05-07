@@ -95,7 +95,7 @@ function buildBasicInfo(infoView, vv) {
   if (vv.state == "asleep") {
     infoView.innerHTML = `
     ${basicInfo}
-    <vscode-button data-command='wakeup' style='width:100%' data-vid='${vv.id_s}'>Wakeup</vscode-button>
+    <vscode-button title='Wakeup ${vv.display_name}' data-command='wakeup' class='big' data-vid='${vv.id_s}'>Wakeup</vscode-button>
     `;
     return;
   }

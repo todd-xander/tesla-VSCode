@@ -149,6 +149,14 @@ a:focus {
   background-color: var(--progress-background);
   height: 10px;
 }
+
+vscode-button.big {
+  width: 100%;
+  max-width: 300px;
+  margin: 6px auto;
+  display: flex;
+}
+
 vscode-data-grid-row:hover,
 vscode-data-grid-row:active,
 vscode-data-grid-row:focus,
