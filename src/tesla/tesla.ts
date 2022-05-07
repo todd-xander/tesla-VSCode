@@ -631,7 +631,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
             <body>
               <div style='height:100vh; padding: 0 8px'>
                 <div>
-                  <img src='${logo}' style='width: 100px; margin: 0 auto 20px auto; padding-top: calc(50% - 50px); display: flex; filter: contrast(0.1);'>
+                  <img src='${logo}' style='width: 100px; margin: 0 auto 50px auto; padding-top: calc(50% - 50px); display: flex; filter: contrast(0.1);'>
                 </div>
                 <vscode-button title='Unfreeze' data-command='unfreeze' class='big'>Unfreeze</vscode-button>
               </div>
