@@ -646,7 +646,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
               let v = data[idx];
               vehicleTab += `<vscode-panel-tab>${v.display_name}</vscode-panel-tab>`;
               vehicleIDs.push(v);
-              vehicleView += `<vscode-panel-view id='${v.id_s}' style='display: block'>
+              vehicleView += `<vscode-panel-view id='${v.id_s}' class='container'>
                               </vscode-panel-view>`;
             }
             let panels = `<vscode-panels class='main'>${data.length > 1 ? vehicleTab : ""}${vehicleView}</vscode-panels>`;
