@@ -23,22 +23,42 @@ function stopPollingVehicleState(vid) {
   }
 }
 
+function buildSyncBtn(view, vid, ts) {
+  if (poll[vid]) {
+    if (!view.classList.contains("enable")) {
+      view.classList.add("enable");
+    }
+    view.innerHTML = `<span class="material-symbols-outlined syncBtn">sync</span>
+                      <span class='timestamp'>
+                        ${new Date(ts).toLocaleString()}
+                      </span>`;
+  } else {
+    if (view.classList.contains("enable")) {
+      view.classList.remove("enable");
+    }
+    view.innerHTML = `<span class="material-symbols-outlined syncBtn">sync_disabled</span>
+                        <span class='timestamp'>
+                        ${new Date(ts).toLocaleString()}
+                      </span>`;
+  }
+}
+
 function toggleAutoRenew(ev) {
+  let vid = ev.currentTarget.dataset.vid;
   ev.currentTarget.classList.toggle("enable");
   let polling = ev.currentTarget.classList.contains("enable");
-  ev.currentTarget.innerHTML = `<span class="material-symbols-outlined">
-                                  ${polling ? "sync" : "sync_disabled"}
-                                </span>`;
+
   if (polling) {
-    startPollingVehicleState(ev.currentTarget.dataset.vid, 5000);
+    startPollingVehicleState(vid, 5000);
   } else {
-    stopPollingVehicleState(ev.currentTarget.dataset.vid);
+    stopPollingVehicleState(vid);
   }
+
+  buildSyncBtn(ev.currentTarget, vid, Date.now());
 }
 
 function buildBasicInfo(infoView, vv) {
   let loc = "";
-  let ts = "";
   let drive = "";
   if (vv.state !== "asleep") {
     let tip = "Location: ";
@@ -57,10 +77,6 @@ function buildBasicInfo(infoView, vv) {
     loc = `<a class='locIcon' title='${tip}' href='${vv.location}'>
             <span class="material-symbols-outlined">explore</span>
           </a>`;
-    ts = `<span class='timestamp'>
-            ${new Date(vv.vehicle_state.timestamp).toLocaleString()}
-          </span>`;
-
     let shift = vv.drive_state.shift_state || "P";
 
     drive = `<div class='drive-info'>`;
@@ -89,7 +105,6 @@ function buildBasicInfo(infoView, vv) {
   let basicInfo = `
   <h1 class='banner'>${vv.display_name}${loc}</h1>
   ${drive}
-  ${ts}
   <img class='car-img' src='${vv.image}'/>`;
 
   if (vv.state == "asleep") {
@@ -143,79 +158,96 @@ function buildShortcutView(shortcutView, vv) {
     return;
   }
   let lockBtn =
-    "<vscode-button class='shortcut' title='Unlocked'><span class='material-symbols-outlined'>key</span></vscode-button>";
+    "<vscode-button class='shortcut' title='Doors: Unlocked'><span class='material-symbols-outlined'>lock_open</span></vscode-button>";
   if (vv.vehicle_state.locked) {
     lockBtn =
-      "<vscode-button class='shortcut' appearance='secondary' title='Locked'><span class='material-symbols-outlined'>key_off</span></vscode-button>";
+      "<vscode-button class='shortcut' appearance='secondary' title='Doors: Locked'><span class='material-symbols-outlined'>lock</span></vscode-button>";
   }
 
   let startupBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Standby'><span class='material-symbols-outlined'>settings_remote</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Remote Startup: Off'><span class='material-symbols-outlined'>key_off</span></vscode-button>";
   if (vv.vehicle_state.remote_start) {
     startupBtn =
-      "<vscode-button class='shortcut' title='Startup'><span class='material-symbols-outlined'>settings_remote</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Remote Startup: On'><span class='material-symbols-outlined'>key</span></vscode-button>";
   }
 
   let climateBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Climate Off'><span class='material-symbols-outlined'>mode_fan_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Fan Mode: Off'><span class='material-symbols-outlined'>mode_fan_off</span></vscode-button>";
   if (vv.climate_state.is_climate_on) {
     climateBtn =
-      "<vscode-button class='shortcut' title='Climate On'><span class='material-symbols-outlined'>mode_fan</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Fan Mode: On'><span class='material-symbols-outlined'>mode_fan</span></vscode-button>";
   }
 
   let chargeBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Charger Disconnected'><span class='material-symbols-outlined'>power_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Charging: Disconnected'><span class='material-symbols-outlined'>power</span></vscode-button>";
   if (
     vv.charge_state.charge_port_door_open &&
     vv.charge_state.charge_port_latch === "Engaged"
   ) {
     if (vv.charge_state.charging_state === "Stopped") {
       chargeBtn =
-        "<vscode-button class='shortcut' title='Chager Connected'><span class='material-symbols-outlined'>power</span></vscode-button>";
+        "<vscode-button class='shortcut' title='Chaging: Connected'><span class='material-symbols-outlined'>power</span></vscode-button>";
     } else if (vv.charge_state.charging_state === "Complete") {
       chargeBtn =
-        "<vscode-button class='shortcut' title='Charge Complete'><span class='material-symbols-outlined'>bolt</span></vscode-button>";
+        "<vscode-button class='shortcut' title='Charging: Complete'><span class='material-symbols-outlined'>bolt</span></vscode-button>";
     } else {
-      chargeBtn =
-        "<vscode-button class='shortcut charging' title='Charging'><span class='material-symbols-outlined'>bolt</span></vscode-button>";
+      chargeBtn = `<vscode-button class='shortcut charging' title='Charging: ${vv.charge_state.battery_level}'><span class='material-symbols-outlined'>bolt</span></vscode-button>`;
     }
   }
 
   let hornBtn =
     "<vscode-button class='shortcut' appearance='secondary' title='Honk Horn'><span class='material-symbols-outlined'>volume_up</span></vscode-button>";
   let falshBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Flash Headlights'><span class='material-symbols-outlined'>online_prediction</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Flash Headlights'><span class='material-symbols-outlined'>flare</span></vscode-button>";
   let defrost =
-    "<vscode-button class='shortcut' appearance='secondary' title='Defrost Off'><span class='material-symbols-outlined'>astrophotography_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Defrost Mode: Off'><span class='material-symbols-outlined'>astrophotography_off</span></vscode-button>";
   if (vv.climate_state.defrost_mode == 1) {
     defrost =
-      "<vscode-button class='shortcut' title='Defrost On'><span class='material-symbols-outlined'>auto_awesome</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Defrost Mode: On'><span class='material-symbols-outlined'>auto_awesome</span></vscode-button>";
   }
 
   let frunk =
-    "<vscode-button class='shortcut' appearance='secondary' title='Open Frunk'><span class='material-symbols-outlined'>backpack</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Frunk: Closed'><span class='material-symbols-outlined'>google_travel_outline</span></vscode-button>";
   if (vv.vehicle_state.ft !== 0) {
     frunk =
-      "<vscode-button class='shortcut' title='Frunk Opened'><span class='material-symbols-outlined'>backpack</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Frunk: Opened'><span class='material-symbols-outlined'>google_travel_outline</span></vscode-button>";
   }
   let trunk =
-    "<vscode-button class='shortcut' appearance='secondary' title='Open Trunk'><span class='material-symbols-outlined'>luggage</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Trunk: Closed'><span class='material-symbols-outlined'>luggage</span></vscode-button>";
   if (vv.vehicle_state.rt !== 0) {
     trunk =
-      "<vscode-button class='shortcut' title='Trunk Opened'><span class='material-symbols-outlined'>luggage</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Trunk: Opened'><span class='material-symbols-outlined'>luggage</span></vscode-button>";
+  }
+  let speedLimit =
+    "<vscode-button class='shortcut' appearance='secondary' title='Speed Limit: Off'><span class='material-symbols-outlined'>do_not_disturb_off</span></vscode-button>";
+  if (vv.vehicle_state.speed_limit_mode.active) {
+    speedLimit =
+      "<vscode-button class='shortcut' title='Speed Limit: On'><span class='material-symbols-outlined'>do_not_disturb</span></vscode-button>";
+  }
+  let valet =
+    "<vscode-button class='shortcut' appearance='secondary' title='Valet Mode: Off'><span class='material-symbols-outlined'>group_off</span></vscode-button>";
+  if (vv.vehicle_state.valet_mode) {
+    valet =
+      "<vscode-button class='shortcut' title='Valet Mode: On'><span class='material-symbols-outlined'>group</span></vscode-button>";
+  }
+  let sentry =
+    "<vscode-button class='shortcut' appearance='secondary' title='Sentry Mode: Off'><span class='material-symbols-outlined'>remove_moderator</span></vscode-button>";
+  if (vv.vehicle_state.sentry_mode) {
+    sentry =
+      "<vscode-button class='shortcut' title='Sentry Mode: On'><span class='material-symbols-outlined'>shield</span></vscode-button>";
   }
 
   shortcutView.innerHTML = `
         <vscode-divider></vscode-divider>
         <div class='shortcuts'>
           ${lockBtn}
-          ${climateBtn}
-          ${defrost}
           ${chargeBtn}
-          ${hornBtn}
-          ${falshBtn}
           ${frunk}
           ${trunk}
+          ${climateBtn}
+          ${defrost}
+          ${valet}
+          ${sentry}
         </div>
         <vscode-divider></vscode-divider>
         `;
@@ -223,27 +255,54 @@ function buildShortcutView(shortcutView, vv) {
 
 function buildControlPanels(controlView, vv) {
   if (vv.state == "asleep") {
-    controlView.innerHTML = "";
     return;
   }
 
-  controlView.innerHTML = `
-    <vscode-panels>
-    <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span></vscode-panel-tab>
-    <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span></vscode-panel-tab>
-    <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span></vscode-panel-tab>
-    <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span></vscode-panel-tab>
-    <vscode-panel-tab title='JSON Response'><span class="material-symbols-outlined">data_object</span></vscode-panel-tab>
-    <vscode-panel-view></vscode-panel-view>
-    <vscode-panel-view></vscode-panel-view>
-    <vscode-panel-view></vscode-panel-view>
-    <vscode-panel-view></vscode-panel-view>
-    <vscode-panel-view><div class='json-response' style='user-select: text;'></div></vscode-panel-view>
-    </vscode-panels>
-  `;
+  var viewAction = controlView.querySelector(".control-view-action");
+  var viewClimate = controlView.querySelector(".control-view-climate");
+  var viewCharge = controlView.querySelector(".control-view-charge");
+  var viewSecurity = controlView.querySelector(".control-view-security");
 
-  var detail = controlView.querySelector(".json-response");
-  detail.innerText = `${JSON.stringify(vv, null, 2)}`;
+  viewAction.innerHTML =
+    `<div style='user-select: text; white-space: pre;'>` +
+    JSON.stringify(
+      {
+        id: vv.id,
+        user_id: vv.user_id,
+        vehicle_id: vv.vehicle_id,
+        vin: vv.vin,
+        display_name: vv.display_name,
+        option_codes: vv.option_codes,
+        color: vv.color,
+        access_type: vv.access_type,
+        tokens: vv.tokens,
+        state: vv.state,
+        in_service: vv.in_service,
+        id_s: vv.id_s,
+        calendar_enabled: vv.calendar_enabled,
+        api_version: vv.api_version,
+        backseat_token: vv.backseat_token,
+        backseat_token_updated_at: vv.backseat_token_updated_at,
+        vehicle_config: vv.vehicle_config,
+        gui_settings: vv.gui_settings,
+        drive_state: vv.drive_state,
+      },
+      null,
+      2
+    ) +
+    `</div>`;
+  viewClimate.innerHTML =
+    `<div style='user-select: text; white-space: pre;'>` +
+    JSON.stringify(vv.climate_state, null, 2) +
+    `</div>`;
+  viewCharge.innerHTML =
+    `<div style='user-select: text; white-space: pre;'>` +
+    JSON.stringify(vv.charge_state, null, 2) +
+    `</div>`;
+  viewSecurity.innerHTML =
+    `<div style='user-select: text; white-space: pre;'>` +
+    JSON.stringify(vv.vehicle_state, null, 2) +
+    `</div>`;
 }
 
 function buildFooter(footerView, vv) {
@@ -301,7 +360,13 @@ function buildFooter(footerView, vv) {
 
 function buildFramework(view, data) {
   stopPollingVehicleState(data.id_s);
-  view.innerHTML = `<vscode-data-grid class="view-grid" generate-header="none" aria-label="No Header">
+  view.innerHTML = `
+        <div title="Auto Renew"
+          data-vid="${data.id_s}"
+          class="auto-renew"
+          onclick='toggleAutoRenew(event)'>
+        </div>
+        <vscode-data-grid class="view-grid" generate-header="none" aria-label="No Header">
           <vscode-data-grid-row>
             <vscode-data-grid-cell grid-column="1" class="info-view"></vscode-data-grid-cell>
           </vscode-data-grid-row>
@@ -309,24 +374,40 @@ function buildFramework(view, data) {
             <vscode-data-grid-cell grid-column="1" class="shortcut-view"></vscode-data-grid-cell>
           </vscode-data-grid-row>
           <vscode-data-grid-row class="flex-view">
-            <vscode-data-grid-cell grid-column="1" class="control-view"></vscode-data-grid-cell>
+            <vscode-data-grid-cell grid-column="1" class="control-view">
+              <vscode-panels>
+                <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span><span class='view-label'>Aaction</span></vscode-panel-tab>
+                <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span><span class='view-label'>Climate</span></vscode-panel-tab>
+                <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span><span class='view-label'>Charge</span></vscode-panel-tab>
+                <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span><span class='view-label'>Security</span></vscode-panel-tab>
+                <vscode-panel-view class='control-view-content control-view-action'></vscode-panel-view>
+                <vscode-panel-view class='control-view-content control-view-climate'></vscode-panel-view>
+                <vscode-panel-view class='control-view-content control-view-charge'></vscode-panel-view>
+                <vscode-panel-view class='control-view-content control-view-security'></vscode-panel-view>
+              </vscode-panels>
+            </vscode-data-grid-cell>
           </vscode-data-grid-row>
           <vscode-data-grid-row class="footer-grid">
           </vscode-data-grid-row>
         </vscode-data-grid>`;
-  if (data.state !== "asleep") {
-    view.innerHTML += `<div title="Auto Renew"
-                            data-vid="${data.id_s}"
-                            class="auto-renew"
-                            onclick='toggleAutoRenew(event)'>
-                         <span class="material-symbols-outlined">
-                           sync_disabled
-                         </span>
-                       </div>`;
-  }
 }
 
 function buildContent(view, data) {
+  var ts;
+  if (data.state === "asleep") {
+    if (!view.classList.contains("asleep")) {
+      view.classList.add("asleep");
+    }
+    ts = Date.now();
+  } else {
+    if (view.classList.contains("asleep")) {
+      view.classList.remove("asleep");
+    }
+    ts = data.vehicle_state.timestamp;
+  }
+  var renew = view.querySelector(".auto-renew");
+  buildSyncBtn(renew, data.id_s, ts);
+
   var infoView = view.querySelector(".info-view");
   buildBasicInfo(infoView, data);
 

@@ -278,7 +278,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     if (model[0] === 'my') {
       view = 'STUD_3QTR';
     }
-    let cs = `${subtype[0]},${color[0]},${wheel[0]},${spoiler},${interior[0]}`;
+    let cs = `${subtype[0]},${color[0]},${wheel[0]},${spoiler[0]},${interior[0]}`;
     const image = `https://static-assets.tesla.com/configurator/compositor?&options=${cs}&view=${view}&model=${model[0]}&size=400&bkba_opt=1`;
 
     if (vehicle.state === 'asleep') {
@@ -631,7 +631,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
             <body>
               <div style='height:100vh; padding: 0 8px'>
                 <div>
-                  <img src='${logo}' style='width: 100px; margin: 0 auto 50px auto; padding-top: calc(50% - 50px); display: flex; filter: contrast(0.1);'>
+                  <img src='${logo}' style='width: 100px; margin: 0 auto 50px auto; padding-top: 100px; display: flex; filter: contrast(0.1);'>
                 </div>
                 <vscode-button title='Unfreeze' data-command='unfreeze' class='big'>Unfreeze</vscode-button>
               </div>

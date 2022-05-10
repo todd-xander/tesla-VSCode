@@ -15,7 +15,11 @@ a:focus {
 
 .container {
   position: absolute;
-  height: 100%;
+  padding: 0 5px 5px 5px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .banner {
@@ -66,7 +70,12 @@ a:focus {
 .shortcuts .shortcut {
   width: calc(25% - 3px);
   min-width: 48px;
+  max-width: 100px;
   margin: 2px 0;
+}
+
+body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
+  background: var(--button-border);
 }
 
 @keyframes charging {
@@ -83,18 +92,20 @@ a:focus {
 
 .auto-renew {
   position: absolute;
+  display: grid;
   top: 14px;
   right: 10px;
   cursor: pointer;
   opacity: 0.5;
+  z-index: 999;
+}
+
+.syncBtn {
+  justify-self: right;
 }
 
 .timestamp {
-  position: absolute;
-  right: 3px;
-  top: 32px;
   font-size: 0.8em;
-  opacity: 0.5;
 }
 
 .shortcut.charging {
@@ -107,10 +118,6 @@ a:focus {
   height: 100vh;
 }
 
-.main > vscode-panel-view {
-  padding: 0 5px 5px 0;
-}
-
 .view-grid {
   display: grid;
   width: 100%;
@@ -118,14 +125,26 @@ a:focus {
   grid-template-rows: max-content max-content auto max-content;
 }
 
-.control-view vscode-panel-view {
+.control-view vscode-panel-tab .view-label {
+  display: none;
+}
+
+.control-view vscode-panel-tab[aria-selected="true"] .view-label {
+  margin-left: 6px;
+  display: block;
+}
+
+.asleep .control-view {
+  display: none;
+}
+
+.flex-view {
   padding: 0;
-  margin: 0;
   overflow: auto;
 }
-.flex-view {
-  overflow: auto;
-  grid-template-columns: max-content !important;
+
+.flex-view::-webkit-scrollbar {
+  display: none;
 }
 
 .footer-grid vscode-data-grid-cell {
