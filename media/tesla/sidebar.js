@@ -201,7 +201,7 @@ function buildShortcutView(shortcutView, vv) {
     "<vscode-button class='shortcut' appearance='secondary' title='Flash Headlights'><span class='material-symbols-outlined'>flare</span></vscode-button>";
   let defrost =
     "<vscode-button class='shortcut' appearance='secondary' title='Defrost Mode: Off'><span class='material-symbols-outlined'>astrophotography_off</span></vscode-button>";
-  if (vv.climate_state.defrost_mode == 1) {
+  if (vv.climate_state.defrost_mode !== 0) {
     defrost =
       "<vscode-button class='shortcut' title='Defrost Mode: On'><span class='material-symbols-outlined'>auto_awesome</span></vscode-button>";
   }
