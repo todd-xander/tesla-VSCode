@@ -24,13 +24,15 @@ function stopPollingVehicleState(vid) {
 }
 
 function buildSyncBtn(view, vid, ts) {
+  let timestr = new Date(ts).toLocaleString();
+  view.title = `Last update: ${timestr}`;
   if (poll[vid]) {
     if (!view.classList.contains("enable")) {
       view.classList.add("enable");
     }
     view.innerHTML = `<span class="material-symbols-outlined syncBtn">sync</span>
                       <span class='timestamp'>
-                        ${new Date(ts).toLocaleString()}
+                        ${timestr}
                       </span>`;
   } else {
     if (view.classList.contains("enable")) {
@@ -38,8 +40,8 @@ function buildSyncBtn(view, vid, ts) {
     }
     view.innerHTML = `<span class="material-symbols-outlined syncBtn">sync_disabled</span>
                         <span class='timestamp'>
-                        ${new Date(ts).toLocaleString()}
-                      </span>`;
+                          ${timestr}
+                        </span>`;
   }
 }
 
@@ -75,7 +77,7 @@ function buildBasicInfo(infoView, vv) {
       tip += `,${lng * -1}W`;
     }
     loc = `<a class='locIcon' title='${tip}' href='${vv.location}'>
-            <span class="material-symbols-outlined">explore</span>
+            <span class="material-symbols-outlined" style="transform: rotate(${vv.drive_state.heading}deg);">assistant_navigation</span>
           </a>`;
     let shift = vv.drive_state.shift_state || "P";
 
@@ -103,7 +105,7 @@ function buildBasicInfo(infoView, vv) {
   }
 
   let basicInfo = `
-  <h1 class='banner'>${vv.display_name}${loc}</h1>
+  <h1 class='banner' title='Vehile ID: ${vv.id_s}'>${vv.display_name}${loc}</h1>
   ${drive}
   <img class='car-img' src='${vv.image}'/>`;
 
@@ -184,14 +186,29 @@ function buildShortcutView(shortcutView, vv) {
     vv.charge_state.charge_port_door_open &&
     vv.charge_state.charge_port_latch === "Engaged"
   ) {
+    var current = vv.charge_state.charger_actual_current;
+    var voltage = vv.charge_state.charger_voltage;
+    var power = vv.charge_state.charger_power;
+    var battery_level = vv.charge_state.battery_level;
+    var charge_limit = vv.charge_state.charge_limit_soc;
+    var added_rated = vv.charge_state.charge_miles_added_rated;
+    var charge_rate = vv.charge_state.charge_rate;
+    var distance_unit = "mi";
+    var minutes_to_full_charge = vv.charge_state.minutes_to_full_charge;
+    if (vv.gui_settings.gui_distance_units === "km/hr") {
+      added_rated = Math.floor(added_rated * 1.609344 + 0.5);
+      charge_rate = Math.floor(charge_rate * 1.609344 + 0.5);
+      distance_unit = "km";
+    }
+    var title = `${battery_level}%/${charge_limit}%`;
     if (vv.charge_state.charging_state === "Stopped") {
-      chargeBtn =
-        "<vscode-button class='shortcut' title='Chaging: Connected'><span class='material-symbols-outlined'>power</span></vscode-button>";
+      chargeBtn = `<vscode-button class='shortcut' title='Chaging: Stopped ${title}'><span class='material-symbols-outlined'>power</span></vscode-button>`;
     } else if (vv.charge_state.charging_state === "Complete") {
-      chargeBtn =
-        "<vscode-button class='shortcut' title='Charging: Complete'><span class='material-symbols-outlined'>bolt</span></vscode-button>";
+      title += ` +${added_rated}${distance_unit}`;
+      chargeBtn = `<vscode-button class='shortcut' title='Charging: Complete ${title}'><span class='material-symbols-outlined'>bolt</span></vscode-button>`;
     } else {
-      chargeBtn = `<vscode-button class='shortcut charging' title='Charging: ${vv.charge_state.battery_level}'><span class='material-symbols-outlined'>bolt</span></vscode-button>`;
+      title += ` +${added_rated}${distance_unit} ${charge_rate}${distance_unit}/hr ${current}A/${voltage}V ${power}kwh ${minutes_to_full_charge}minutes remained`;
+      chargeBtn = `<vscode-button class='shortcut charging' title='Charging: ${title}'><span class='material-symbols-outlined'>bolt</span></vscode-button>`;
     }
   }
 
@@ -264,25 +281,10 @@ function buildControlPanels(controlView, vv) {
   var viewSecurity = controlView.querySelector(".control-view-security");
 
   viewAction.innerHTML =
-    `<div style='user-select: text; white-space: pre;'>` +
+    `<div style='width:100%'>
+    <div style='user-select: text; white-space: pre;'>` +
     JSON.stringify(
       {
-        id: vv.id,
-        user_id: vv.user_id,
-        vehicle_id: vv.vehicle_id,
-        vin: vv.vin,
-        display_name: vv.display_name,
-        option_codes: vv.option_codes,
-        color: vv.color,
-        access_type: vv.access_type,
-        tokens: vv.tokens,
-        state: vv.state,
-        in_service: vv.in_service,
-        id_s: vv.id_s,
-        calendar_enabled: vv.calendar_enabled,
-        api_version: vv.api_version,
-        backseat_token: vv.backseat_token,
-        backseat_token_updated_at: vv.backseat_token_updated_at,
         vehicle_config: vv.vehicle_config,
         gui_settings: vv.gui_settings,
         drive_state: vv.drive_state,
@@ -290,19 +292,91 @@ function buildControlPanels(controlView, vv) {
       null,
       2
     ) +
-    `</div>`;
+    `</div>
+    </div>`;
+
   viewClimate.innerHTML =
-    `<div style='user-select: text; white-space: pre;'>` +
+    `<div style='width:100%'>
+    <div style='user-select: text; white-space: pre;'>` +
     JSON.stringify(vv.climate_state, null, 2) +
-    `</div>`;
+    `</div>
+    </div>`;
+
+  var current = vv.charge_state.charger_actual_current;
+  var voltage = vv.charge_state.charger_voltage;
+  var power = vv.charge_state.charger_power;
+  var battery_level = vv.charge_state.battery_level;
+  var charge_limit = vv.charge_state.charge_limit_soc;
+  var added_rated = vv.charge_state.charge_miles_added_rated;
+  var charge_rate = vv.charge_state.charge_rate;
+  var distance_unit = "mi";
+  var minutes_to_full_charge = vv.charge_state.minutes_to_full_charge;
+  if (vv.gui_settings.gui_distance_units === "km/hr") {
+    added_rated = Math.floor(added_rated * 1.609344 + 0.5);
+    charge_rate = Math.floor(charge_rate * 1.609344 + 0.5);
+    distance_unit = "km";
+  }
+  var progressInfo = `<div value="${battery_level}" max="100" class="charge-progress">
+                        <div class='meter ${vv.charge_state.charging_state}' style='width: ${battery_level}%' data-value="${battery_level}"></div>
+                      </div>
+                      <input type='range' value="${charge_limit}" min="0" max="100" class="charge-limit-set"></input>
+                      <output class='battery-limit-label'>${charge_limit}%</output>`;
+  var stateInfo = "";
+  if (
+    vv.charge_state.charge_port_door_open &&
+    vv.charge_state.charge_port_latch === "Engaged"
+  ) {
+    if (vv.charge_state.charging_state === "Stopped") {
+      stateInfo = `<div></div>`;
+    } else if (vv.charge_state.charging_state === "Complete") {
+      stateInfo = `<div>+${added_rated}${distance_unit}</div>`;
+    } else {
+      stateInfo = `<div>+${added_rated}${distance_unit} ${charge_rate}${distance_unit}/hr ${current}A/${voltage}V ${power}kwh ${minutes_to_full_charge}minutes remained</div>`;
+    }
+  }
+
   viewCharge.innerHTML =
-    `<div style='user-select: text; white-space: pre;'>` +
+    `<div style='width:100%'>
+    ${progressInfo}
+    ${stateInfo}
+    <div style='user-select: text; white-space: pre;'>` +
     JSON.stringify(vv.charge_state, null, 2) +
-    `</div>`;
+    `</div>
+    </div>`;
+
+  let sentry = `<span class='material-symbols-outlined'>shield</span><span class='label'>Sentrey Mode</span>`;
+  if (vv.vehicle_state.sentry_mode) {
+    sentry += `<span class='material-symbols-outlined toggle enable'>toggle_on</span>`;
+  } else {
+    sentry += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
+  }
+
+  let valet = `<span class='material-symbols-outlined'>group</span><span class='label'>Valet Mode</span>`;
+  if (vv.vehicle_state.valet_mode) {
+    valet += `<span class='material-symbols-outlined toggle enable'>toggle_on</span>`;
+  } else {
+    valet += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
+  }
+
+  let speedLimit = `<span class='material-symbols-outlined'>speed</span><span class='label'>Speed Limit Mode</span>`;
+  if (vv.vehicle_state.speed_limit_mode.active) {
+    speedLimit += `<span class='material-symbols-outlined toggle enable'>toggle_on</span>`;
+  } else {
+    speedLimit += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
+  }
   viewSecurity.innerHTML =
-    `<div style='user-select: text; white-space: pre;'>` +
+    `<div style='width:100%'>
+    <vscode-divider></vscode-divider>
+    <div class='switcher'>${sentry}</div>
+    <vscode-divider></vscode-divider>
+    <div class='switcher'>${valet}</div>
+    <vscode-divider></vscode-divider>
+    <div class='switcher'>${speedLimit}</div>
+    <vscode-divider></vscode-divider>
+    <div style='user-select: text; white-space: pre;'>` +
     JSON.stringify(vv.vehicle_state, null, 2) +
-    `</div>`;
+    `</div>
+    </div>`;
 }
 
 function buildFooter(footerView, vv) {
@@ -359,7 +433,6 @@ function buildFooter(footerView, vv) {
 }
 
 function buildFramework(view, data) {
-  stopPollingVehicleState(data.id_s);
   view.innerHTML = `
         <div title="Auto Renew"
           data-vid="${data.id_s}"
