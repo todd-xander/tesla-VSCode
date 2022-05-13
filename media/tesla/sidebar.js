@@ -283,17 +283,18 @@ function buildControlPanels(controlView, vv) {
   viewAction.innerHTML =
     `<div style='width:100%'>
     <center class="model">
-      <div class="action-list">
-        <vscode-button>Unlock</vscode-button>
-        <vscode-button>Horn</vscode-button>
-        <vscode-button>Flash</vscode-button>
-      </div>
       <div class="above-view-model">
         <vscode-button class="action-btn">FRUNK</vscode-button>
         <vscode-button class="action-btn">SUNROOF</vscode-button>
         <vscode-button class="action-btn last">TRUNK</vscode-button>
         <vscode-button class="action-btn charger"><span class="material-symbols-outlined" style="font-size: 1.3em">settings_input_svideo</span></vscode-button>
         <div class="model-bg" style="margin-top: -375px; background-image: url(https://file%2B.vscode-resource.vscode-cdn.net${vv.baseUrl}/media/Tesla-Model-3.svg)"></div>
+      </div>
+      <div class="shortcuts">
+        <vscode-button class='shortcut' appearance='secondary' title='Lock Doors'><span class='material-symbols-outlined'>lock</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Honk Horn'><span class='material-symbols-outlined'>volume_up</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Flash Headlights'><span class='material-symbols-outlined'>flare</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Ventilate'><span class="material-symbols-outlined">sim_card_download</span></vscode-button>
       </div>
     </center>
     <div style='user-select: text; white-space: pre;margin-top: 200px;'>` +

@@ -203,7 +203,7 @@ control-view-content {
   pointer-events: none;
   width: 186px;
   height: 415px;
-  filter: contrast(0.1);
+  filter: contrast(0.01);
   background-repeat: no-repeat;
   background-size: contain;
 }
@@ -215,7 +215,7 @@ control-view-content {
   margin-top: 20px;
   font-size: 40px;
   transform: rotate(90deg) rotateY(45deg);
-  opacity: 0.6;
+  opacity: 0.4;
 }
 .LeftHand .steering {
   margin-left: -55px;
