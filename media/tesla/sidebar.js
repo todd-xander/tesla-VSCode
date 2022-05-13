@@ -282,7 +282,20 @@ function buildControlPanels(controlView, vv) {
 
   viewAction.innerHTML =
     `<div style='width:100%'>
-    <div style='user-select: text; white-space: pre;'>` +
+    <center class="model">
+      <div class="action-list">
+        <vscode-button>Unlock</vscode-button>
+        <vscode-button>Horn</vscode-button>
+        <vscode-button>Flash</vscode-button>
+      </div>
+      <div class="above-view-model">
+        <vscode-button class="action-btn">FRUNK</vscode-button>
+        <vscode-button class="action-btn">SUNROOF</vscode-button>
+        <vscode-button class="action-btn last">TRUNK</vscode-button>
+        <div class="model-bg" style="margin-top: -375px; background-image: url(https://file%2B.vscode-resource.vscode-cdn.net${vv.baseUrl}/media/Tesla-Model-3.svg)"></div>
+      </div>
+    </center>
+    <div style='user-select: text; white-space: pre;margin-top: 200px;'>` +
     JSON.stringify(
       {
         vehicle_config: vv.vehicle_config,
@@ -297,6 +310,11 @@ function buildControlPanels(controlView, vv) {
 
   viewClimate.innerHTML =
     `<div style='width:100%'>
+    <center class="model">
+      <div class="above-view-model">
+        <div class="model-bg" style="background-image: url(https://file%2B.vscode-resource.vscode-cdn.net${vv.baseUrl}/media/Tesla-Model-3.svg)"></div>
+      </div>
+    </center>
     <div style='user-select: text; white-space: pre;'>` +
     JSON.stringify(vv.climate_state, null, 2) +
     `</div>
@@ -394,27 +412,38 @@ function buildFooter(footerView, vv) {
   }
   let update = "";
   if (vv.vehicle_state.software_update.status === "available") {
-    update = `<div class='update'><span title='Update available" class="material-symbols-outlined">
-                download_for_offline
-              </span>
-              </div>`;
+    update = `<vscode-divider></vscode-divider>
+              <h3>New Update Available: 
+                <span style="white-space: nowrap;">
+                  ${vv.vehicle_state.software_update.version}
+                </span>
+              </h3>
+              <vscode-button class='big' title='Update to ${vv.vehicle_state.software_update.version}'>
+                Update
+              </vscode-button>`;
   } else if (vv.vehicle_state.software_update.status === "scheduled") {
-    update = `<div class='update'>
-              <span class="material-symbols-outlined">
-                download_for_offline
-              </span>
-              <div class="progressbar" title='Update downloading: ${vv.vehicle_state.software_update.download_perc}%'>
-                <div style="width:${vv.vehicle_state.software_update.download_perc}%"></div>
-              </div>
+    update = `<vscode-divider></vscode-divider>
+              <h3>Update Scheduled: 
+                <span style="white-space: nowrap;">
+                  ${vv.vehicle_state.software_update.version}
+                </span>
+              </h3>
+              <div class='update'>
+                <div class="progressbar" title='Update downloading: ${vv.vehicle_state.software_update.download_perc}%'>
+                  <div style="width:${vv.vehicle_state.software_update.download_perc}%"></div>
+                </div>
               </div>`;
   } else if (vv.vehicle_state.software_update.status === "installing") {
-    update = `<div class='update'>
-              <span class="material-symbols-outlined">
-                build_circle
-              </span>
-              <div class="progressbar" title='Update installing: ${vv.vehicle_state.software_update.install_perc}%'>
-                <div style="width:${vv.vehicle_state.software_update.install_perc}%"></div>
-              </div>
+    update = `<vscode-divider></vscode-divider>
+              <h3>Update Installing: 
+                <span style="white-space: nowrap;">
+                  ${vv.vehicle_state.software_update.version}
+                </span>
+              </h3>
+              <div class='update'>
+                <div class="progressbar" title='Update installing: ${vv.vehicle_state.software_update.install_perc}%'>
+                  <div style="width:${vv.vehicle_state.software_update.install_perc}%"></div>
+                </div>
               </div>`;
   }
   footerView.innerHTML = `
@@ -428,7 +457,11 @@ function buildFooter(footerView, vv) {
       <vscode-data-grid-row>
         <vscode-data-grid-cell grid-column="1">VER: ${vv.vehicle_state.car_version}</vscode-data-grid-cell>
       </vscode-data-grid-row>
-      ${update}
+      <vscode-data-grid-row>
+        <vscode-data-grid-cell style="opacity: 1" grid-column="1">
+          ${update}
+        </vscode-data-grid-cell>
+      </vscode-data-grid-row>
   `;
 }
 

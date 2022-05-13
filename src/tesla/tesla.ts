@@ -260,6 +260,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     return ["", ""];
   }
   private async getVehicleInfo(vid: string, vehicle: tjs.Vehicle): Promise<any> {
+    const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
     let option: tjs.optionsType = {
       authToken: this.token || '',
       vehicleID: vid,
@@ -283,7 +284,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
 
     if (vehicle.state === 'asleep') {
       return new Promise<any>((resolve, reject) => {
-        let vd = { image };
+        let vd = { baseUrl, image };
         resolve(Object.assign(vd, vehicle));
       });
     } else {
@@ -293,7 +294,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
         if (codes.includes('COCN')) {
           location = `https://uri.amap.com/marker?position=${v.drive_state.corrected_longitude},${v.drive_state.corrected_latitude}&name=${v.display_name}`;
         }
-        let vd = { image, location };
+        let vd = { baseUrl, image, location };
         let vv = Object.assign(vd, v);
         return vv;
       });
@@ -554,7 +555,6 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     if (!this.view) {
       return;
     }
-
     const meterialSymbolsUri = this.view.asWebviewUri(
       vscode.Uri.joinPath(
         this.extension.extensionUri,
@@ -664,6 +664,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
               ${panels}
             </body>
             </html>`;
+
             for (let idx = 0; idx < vehicleIDs.length; idx++) {
               let vehicle = vehicleIDs[idx];
               this.getVehicleInfo(vehicle.id_s, vehicle).then((value) => {

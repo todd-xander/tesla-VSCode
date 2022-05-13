@@ -146,8 +146,51 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
 .flex-view::-webkit-scrollbar {
   display: none;
 }
+
+control-view-content {
+  padding: 0 5px;
+}
+
+.model {
+  margin-top: 10px;
+}
+.model .action-list {
+  max-width: 360px;
+}
+.model .action-list vscode-button {
+  border-radius: 5px;
+  width: 31%;
+  margin-right: 2%;
+}
+.model .action-list vscode-button:last-child {
+  margin-right: 0%;
+}
+.model .action-btn {
+  display: block;
+  border-radius: 15px;
+  width: fit-content;
+  margin: 0px 0 130px 0;
+}
+.model .action-btn.last {
+  margin: 0;
+}
+.model .above-view-model {
+  width: 186px;
+  height: 415px;
+  margin-top: 40px;
+}
+.model .model-bg {
+  pointer-events: none;
+  width: 186px;
+  height: 415px;
+  filter: contrast(0.1);
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
 .charge-progress {
   height: 35px;
+  margin-top: 20px;
   margin-left: 10px;
   width: calc(100% - 8px - 24px);
   border: 2px solid var(--divider-background);
@@ -254,25 +297,37 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
 .update {
   display: inline-flex;
   align-items: center;
-  margin: 4px 0 0 0;
+  width: 100%;
 }
 .update > span {
-  background-color: var(--progress-background);
   padding: 4px;
   border-radius: 50%;
   cursor: pointer;
+  z-index: 2;
+  color: var(--button-primary-foreground);
+  background: var(--button-primary-background);
+}
+body.vscode-high-contrast .update > span {
+  background: var(--button-border);
 }
 .update .progressbar {
-  margin-left: -2px;
+  margin-left: -3px;
   width: 100%;
   background-color: transparent;
-  border-right: 3px solid var(--progress-background);
+  border: 1px solid var(--button-primary-background);
+  border-radius: 3px;
   padding: 0;
 }
-
+body.vscode-high-contrast .update .progressbar {
+  border: 1px solid var(--button-border);
+}
 .update .progressbar > div {
-  background-color: var(--progress-background);
+  background-color: var(--button-primary-background);
   height: 10px;
+  border-radius: 0 3px 3px 0;
+}
+body.vscode-high-contrast .update .progressbar > div {
+  background: var(--button-border);
 }
 
 vscode-button.big {
