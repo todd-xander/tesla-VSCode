@@ -280,8 +280,7 @@ function buildControlPanels(controlView, vv) {
   var viewCharge = controlView.querySelector(".control-view-charge");
   var viewSecurity = controlView.querySelector(".control-view-security");
 
-  viewAction.innerHTML =
-    `<div style='width:100%'>
+  viewAction.innerHTML = `<div style='width:100%'>
     <center class="model">
       <div class="above-view-model">
         <vscode-button class="action-btn">FRUNK</vscode-button>
@@ -297,30 +296,15 @@ function buildControlPanels(controlView, vv) {
         <vscode-button class='shortcut' appearance='secondary' title='Ventilate'><span class="material-symbols-outlined">sim_card_download</span></vscode-button>
       </div>
     </center>
-    <div style='user-select: text; white-space: pre;margin-top: 200px;'>` +
-    JSON.stringify(
-      {
-        vehicle_config: vv.vehicle_config,
-        gui_settings: vv.gui_settings,
-        drive_state: vv.drive_state,
-      },
-      null,
-      2
-    ) +
-    `</div>
     </div>`;
 
-  viewClimate.innerHTML =
-    `<div style='width:100%'>
+  viewClimate.innerHTML = `<div style='width:100%'>
     <center class="model scaled">
       <div class="above-view-model ${vv.driverPosition}">
         <span class="material-symbols-outlined steering">donut_large</span>
         <div class="model-bg" style="background-image: url(https://file%2B.vscode-resource.vscode-cdn.net${vv.baseUrl}/media/Tesla-Model-3.svg)"></div>
       </div>
     </center>
-    <div style='user-select: text; white-space: pre;'>` +
-    JSON.stringify(vv.climate_state, null, 2) +
-    `</div>
     </div>`;
 
   var current = vv.charge_state.charger_actual_current;
@@ -356,13 +340,9 @@ function buildControlPanels(controlView, vv) {
     }
   }
 
-  viewCharge.innerHTML =
-    `<div style='width:100%'>
+  viewCharge.innerHTML = `<div style='width:100%'>
     ${progressInfo}
     ${stateInfo}
-    <div style='user-select: text; white-space: pre;'>` +
-    JSON.stringify(vv.charge_state, null, 2) +
-    `</div>
     </div>`;
 
   let sentry = `<span class='material-symbols-outlined'>shield</span><span class='label'>Sentrey Mode</span>`;
@@ -385,18 +365,18 @@ function buildControlPanels(controlView, vv) {
   } else {
     speedLimit += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
   }
-  viewSecurity.innerHTML =
-    `<div style='width:100%'>
-    <vscode-divider></vscode-divider>
-    <div class='switcher'>${sentry}</div>
-    <vscode-divider></vscode-divider>
-    <div class='switcher'>${valet}</div>
-    <vscode-divider></vscode-divider>
-    <div class='switcher'>${speedLimit}</div>
-    <vscode-divider></vscode-divider>
-    <div style='user-select: text; white-space: pre;'>` +
-    JSON.stringify(vv.vehicle_state, null, 2) +
-    `</div>
+  viewSecurity.innerHTML = `
+    <div style='width:100%'>
+      <vscode-divider></vscode-divider>
+      <div class='switcher'>${sentry}</div>
+      <vscode-divider></vscode-divider>
+      <div class='switcher'>${valet}</div>
+      <vscode-divider></vscode-divider>
+      <div class='switcher'>${speedLimit}</div>
+      <vscode-divider></vscode-divider>
+      <div class='debug' style='user-select: text; white-space: pre;'>
+        ${JSON.stringify(vv, null, 2)}
+      </div>
     </div>`;
 }
 

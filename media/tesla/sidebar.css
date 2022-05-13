@@ -147,13 +147,15 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
   display: none;
 }
 
-control-view-content {
+.debug {
+  display: none;
+}
+
+.control-view-content {
+  min-height: 200px;
   padding: 0 5px;
 }
 
-.model {
-  margin-top: 10px;
-}
 .model .action-list {
   max-width: 360px;
 }
@@ -184,13 +186,14 @@ control-view-content {
   margin-top: 40px;
 }
 .model.scaled {
+  margin-top: -10px;
   -webkit-mask-image: -webkit-gradient(
     linear,
     left top,
     left bottom,
     color-stop(0%, rgba(0, 0, 0, 0)),
     color-stop(10%, rgba(0, 0, 0, 1)),
-    color-stop(90%, rgba(0, 0, 0, 1)),
+    color-stop(80%, rgba(0, 0, 0, 1)),
     color-stop(100%, rgba(0, 0, 0, 0))
   );
 }
@@ -225,7 +228,7 @@ control-view-content {
 }
 .charge-progress {
   height: 35px;
-  margin-top: 20px;
+  margin-top: 30px;
   margin-left: 10px;
   width: calc(100% - 8px - 24px);
   border: 2px solid var(--divider-background);
