@@ -174,10 +174,30 @@ control-view-content {
 .model .action-btn.last {
   margin: 0;
 }
+.model .action-btn.charger {
+  position: absolute;
+  margin: -50px 0 0 -30px;
+}
 .model .above-view-model {
   width: 186px;
   height: 415px;
   margin-top: 40px;
+}
+.model.scaled {
+  -webkit-mask-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0%, rgba(0, 0, 0, 0)),
+    color-stop(10%, rgba(0, 0, 0, 1)),
+    color-stop(90%, rgba(0, 0, 0, 1)),
+    color-stop(100%, rgba(0, 0, 0, 0))
+  );
+}
+.model.scaled .above-view-model {
+  overflow: hidden;
+  width: 240px;
+  height: 350px;
 }
 .model .model-bg {
   pointer-events: none;
@@ -187,7 +207,22 @@ control-view-content {
   background-repeat: no-repeat;
   background-size: contain;
 }
-
+.model.scaled .model-bg {
+  transform: scale(1.2) translateY(-85px);
+}
+.steering {
+  position: absolute;
+  margin-top: 20px;
+  font-size: 40px;
+  transform: rotate(90deg) rotateY(45deg);
+  opacity: 0.6;
+}
+.LeftHand .steering {
+  margin-left: -55px;
+}
+.RightHand .steering {
+  margin-left: 15px;
+}
 .charge-progress {
   height: 35px;
   margin-top: 20px;

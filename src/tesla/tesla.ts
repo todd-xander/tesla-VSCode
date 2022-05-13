@@ -148,7 +148,13 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     }
     return ["", ""];
   }
-
+  private optionCodesToDriverPos(codes: String[]): String[] {
+    for (var v of codes) {
+      if (v === 'DRLH') { return [v, 'LeftHand']; }
+      if (v === 'DRRH') { return [v, 'RightHand']; }
+    }
+    return ["", ""];
+  }
   private optionCodesToDriveEngine(codes: String[]): String[] {
     for (var v of codes) {
       if (v === 'DV2W') { return [v, 'Rear-Wheel Drive']; }
@@ -294,7 +300,8 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
         if (codes.includes('COCN')) {
           location = `https://uri.amap.com/marker?position=${v.drive_state.corrected_longitude},${v.drive_state.corrected_latitude}&name=${v.display_name}`;
         }
-        let vd = { baseUrl, image, location };
+        let driverPos = this.optionCodesToDriverPos(codes);
+        let vd = { baseUrl, image, driverPosition: driverPos[1], location };
         let vv = Object.assign(vd, v);
         return vv;
       });

@@ -292,6 +292,7 @@ function buildControlPanels(controlView, vv) {
         <vscode-button class="action-btn">FRUNK</vscode-button>
         <vscode-button class="action-btn">SUNROOF</vscode-button>
         <vscode-button class="action-btn last">TRUNK</vscode-button>
+        <vscode-button class="action-btn charger"><span class="material-symbols-outlined" style="font-size: 1.3em">settings_input_svideo</span></vscode-button>
         <div class="model-bg" style="margin-top: -375px; background-image: url(https://file%2B.vscode-resource.vscode-cdn.net${vv.baseUrl}/media/Tesla-Model-3.svg)"></div>
       </div>
     </center>
@@ -310,8 +311,9 @@ function buildControlPanels(controlView, vv) {
 
   viewClimate.innerHTML =
     `<div style='width:100%'>
-    <center class="model">
-      <div class="above-view-model">
+    <center class="model scaled">
+      <div class="above-view-model ${vv.driverPosition}">
+        <span class="material-symbols-outlined steering">donut_large</span>
         <div class="model-bg" style="background-image: url(https://file%2B.vscode-resource.vscode-cdn.net${vv.baseUrl}/media/Tesla-Model-3.svg)"></div>
       </div>
     </center>
