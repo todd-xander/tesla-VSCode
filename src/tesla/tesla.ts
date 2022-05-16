@@ -297,11 +297,13 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
       return tjs.vehicleDataAsync(option).then(result => {
         let v = result as any;
         let location = `https://www.google.com/maps/search/?api=1&query=${v.drive_state.corrected_latitude},${v.drive_state.corrected_longitude}`;
+        let map = "";
         if (codes.includes('COCN')) {
           location = `https://uri.amap.com/marker?position=${v.drive_state.corrected_longitude},${v.drive_state.corrected_latitude}&name=${v.display_name}`;
+          map = `https://restapi.amap.com/v3/staticmap?location=${v.drive_state.corrected_longitude},${v.drive_state.corrected_latitude}&zoom=16&size=750*750&key=ee95e52bf08006f63fd29bcfbcf21df0`;
         }
         let driverPos = this.optionCodesToDriverPos(codes);
-        let vd = { baseUrl, image, driverPosition: driverPos[1], location };
+        let vd = { baseUrl, image, driverPosition: driverPos[1], location, map };
         let vv = Object.assign(vd, v);
         return vv;
       });
@@ -660,7 +662,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
             this.view.html = `<!DOCTYPE html>
             <html lang="en">
             <head>
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this.view.cspSource} https://*.tesla.com; font-src ${this.view.cspSource};  style-src ${this.view.cspSource} 'unsafe-inline'; script-src ${this.view.cspSource} 'unsafe-inline';" >
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this.view.cspSource} https://*.tesla.com https://*.amap.com; font-src ${this.view.cspSource};  style-src ${this.view.cspSource} 'unsafe-inline'; script-src ${this.view.cspSource} 'unsafe-inline';" >
             <link href="${meterialSymbolsUri}" rel="stylesheet" />
             <link href="${cssUri}" rel="stylesheet" />
             <script type="module" src="${toolkitUri}"></script>

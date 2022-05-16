@@ -39,6 +39,7 @@ a:focus {
 .car-img {
   margin: 0 auto;
   display: block;
+  margin-bottom: -20px;
 }
 .drive-info {
   font-family: var(--vscode-editor-font-family);
@@ -59,7 +60,7 @@ a:focus {
   font-weight: bold;
   font-size: 1em;
   text-align: center;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .state-info > span {
@@ -131,7 +132,7 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
 
 .control-view vscode-panel-tab[aria-selected="true"] .view-label {
   margin-left: 6px;
-  display: block;
+  -display: block;
 }
 
 .asleep .control-view {
@@ -143,7 +144,8 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
   overflow: auto;
 }
 
-.flex-view::-webkit-scrollbar {
+.flex-view::-webkit-scrollbar,
+.control-view vscode-panels::-webkit-scrollbar {
   display: none;
 }
 
@@ -151,8 +153,30 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
   display: none;
 }
 
+.map {
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 600px 600px;
+  filter: invert(1);
+  overflow: hidden;
+  background-color: var(--background);
+  background-blend-mode: difference;
+}
+.map .marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: var(--link-foreground);
+  border-radius: 50% 50% 20% 20%;
+}
+@media only screen and (min-width: 600px) {
+  .map {
+    background-size: cover;
+  }
+}
 .control-view-content {
-  min-height: 200px;
+  height: calc(100vh - 465px);
   padding: 0 5px;
 }
 

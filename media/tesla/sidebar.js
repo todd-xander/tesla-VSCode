@@ -26,6 +26,9 @@ function stopPollingVehicleState(vid) {
 function buildSyncBtn(view, vid, ts) {
   let timestr = new Date(ts).toLocaleString();
   view.title = `Last update: ${timestr}`;
+  if (!view.onclick) {
+    view.onclick = toggleAutoRenew;
+  }
   if (poll[vid]) {
     if (!view.classList.contains("enable")) {
       view.classList.add("enable");
@@ -275,10 +278,18 @@ function buildControlPanels(controlView, vv) {
     return;
   }
 
+  var viewLocation = controlView.querySelector(".control-view-location");
   var viewAction = controlView.querySelector(".control-view-action");
   var viewClimate = controlView.querySelector(".control-view-climate");
   var viewCharge = controlView.querySelector(".control-view-charge");
   var viewSecurity = controlView.querySelector(".control-view-security");
+
+  viewLocation.innerHTML = `<div style='width:100%'>
+      <div class='map'
+           style='background-image:url(https://restapi.amap.com/v3/staticmap?location=${vv.drive_state.corrected_longitude},${vv.drive_state.corrected_latitude}&zoom=16&size=750*750&key=ee95e52bf08006f63fd29bcfbcf21df0)'>
+        <span class="material-symbols-outlined marker" style="transform: rotate(${vv.drive_state.heading}deg);">navigation</span>
+      </div>
+    </div>`;
 
   viewAction.innerHTML = `<div style='width:100%'>
     <center class="model">
@@ -452,8 +463,7 @@ function buildFramework(view, data) {
   view.innerHTML = `
         <div title="Auto Renew"
           data-vid="${data.id_s}"
-          class="auto-renew"
-          onclick='toggleAutoRenew(event)'>
+          class="auto-renew">
         </div>
         <vscode-data-grid class="view-grid" generate-header="none" aria-label="No Header">
           <vscode-data-grid-row>
@@ -465,10 +475,12 @@ function buildFramework(view, data) {
           <vscode-data-grid-row class="flex-view">
             <vscode-data-grid-cell grid-column="1" class="control-view">
               <vscode-panels>
+                <vscode-panel-tab title='Location'><span class="material-symbols-outlined">map</span><span class='view-label'>Location</span></vscode-panel-tab>
                 <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span><span class='view-label'>Aaction</span></vscode-panel-tab>
                 <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span><span class='view-label'>Climate</span></vscode-panel-tab>
                 <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span><span class='view-label'>Charge</span></vscode-panel-tab>
                 <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span><span class='view-label'>Security</span></vscode-panel-tab>
+                <vscode-panel-view class='control-view-content control-view-location'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-action'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-climate'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-charge'></vscode-panel-view>
