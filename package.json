@@ -13,7 +13,7 @@
     "url": "https://github.com/todd-xander/tesla-VSCode/issues",
     "email": "tod.xander@gmail.com"
   },
-  "version": "0.1.3",
+  "version": "0.1.4",
   "preview": true,
   "icon": "media/tesla.png",
   "engines": {
