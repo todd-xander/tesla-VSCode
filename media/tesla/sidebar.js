@@ -62,28 +62,77 @@ function toggleAutoRenew(ev) {
   buildSyncBtn(ev.currentTarget, vid, Date.now());
 }
 
+let maps = {};
+
+function buildMap(node, v) {
+  if (maps[v.id_s]) {
+    maps[v.id_s].dispose();
+  }
+  var map = new Microsoft.Maps.Map(node, {
+    credentials:
+      "An_6ByRH6GN7uClufsDPzCH1A4rWipnVD2xgUYbYQPQo30fnm5zm3a1IW7mehszk",
+    center: new Microsoft.Maps.Location(
+      v.drive_state.corrected_latitude,
+      v.drive_state.corrected_longitude
+    ),
+    zoom: 16,
+    showDashboard: false,
+    showLocateMeButton: false,
+    showMapTypeSelector: false,
+    showScalebar: false,
+    showZoomButtons: false,
+  });
+  var center = map.getCenter();
+  var pin = new Microsoft.Maps.Pushpin(center, {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 48 48" fill="none" style="transform: rotate(${v.drive_state.heading}deg);">
+            <rect width="48" height="48" fill="white" fill-opacity="0.01"/>
+            <path d="M24.5 4L9 44L24.5 34.9091L40 44L24.5 4Z" fill="#2F88FF" stroke="black" stroke-width="4" stroke-linejoin="round"/>
+          </svg>`,
+  });
+
+  map.entities.push(pin);
+  maps[v.id_s] = map;
+}
+
+function updateMap(map, v) {
+  map.entities.clear();
+  map.setOptions({
+    center: new Microsoft.Maps.Location(
+      v.drive_state.corrected_latitude,
+      v.drive_state.corrected_longitude
+    ),
+  });
+  map.setView({
+    center: new Microsoft.Maps.Location(
+      v.drive_state.corrected_latitude,
+      v.drive_state.corrected_longitude
+    ),
+  });
+  var center = map.getCenter();
+  var pin = new Microsoft.Maps.Pushpin(center, {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 48 48" fill="none" style="transform: rotate(${v.drive_state.heading}deg);">
+            <rect width="48" height="48" fill="white" fill-opacity="0.01"/>
+            <path d="M24.5 4L9 44L24.5 34.9091L40 44L24.5 4Z" fill="#2F88FF" stroke="black" stroke-width="4" stroke-linejoin="round"/>
+          </svg>`,
+  });
+
+  map.entities.push(pin);
+}
+
+function clearMaps(id) {
+  for (var i in maps) {
+    if (!id || id === i) {
+      var m = maps[i];
+      m.dispose();
+      maps[i] = undefined;
+    }
+  }
+}
+
 function buildBasicInfo(infoView, vv) {
-  let loc = "";
   let drive = "";
   if (vv.state !== "asleep") {
-    let tip = "Location: ";
-    let lat = vv.drive_state.corrected_latitude;
-    if (lat >= 0) {
-      tip += `${lat}N`;
-    } else {
-      tip += `${lat * -1}S`;
-    }
-    let lng = vv.drive_state.corrected_longitude;
-    if (lat >= 0) {
-      tip += `,${lng}E`;
-    } else {
-      tip += `,${lng * -1}W`;
-    }
-    loc = `<a class='locIcon' title='${tip}' href='${vv.location}'>
-            <span class="material-symbols-outlined" style="transform: rotate(${vv.drive_state.heading}deg);">assistant_navigation</span>
-          </a>`;
     let shift = vv.drive_state.shift_state || "P";
-
     drive = `<div class='drive-info'>`;
     drive += ["P", "R", "N", "D"]
       .map((v, i, arr) => {
@@ -108,11 +157,12 @@ function buildBasicInfo(infoView, vv) {
   }
 
   let basicInfo = `
-  <h1 class='banner' title='Vehile ID: ${vv.id_s}'>${vv.display_name}${loc}</h1>
+  <h1 class='banner' title='Vehile ID: ${vv.id_s}'>${vv.display_name}</h1>
   ${drive}
   <img class='car-img' src='${vv.image}'/>`;
 
   if (vv.state == "asleep") {
+    clearMaps(vv.id_s);
     infoView.innerHTML = `
     ${basicInfo}
     <vscode-button title='Wakeup ${vv.display_name}' data-command='wakeup' class='big' data-vid='${vv.id_s}'>Wakeup</vscode-button>
@@ -284,12 +334,23 @@ function buildControlPanels(controlView, vv) {
   var viewCharge = controlView.querySelector(".control-view-charge");
   var viewSecurity = controlView.querySelector(".control-view-security");
 
-  viewLocation.innerHTML = `<div style='width:100%'>
-      <div class='map'
-           style='background-image:url(https://restapi.amap.com/v3/staticmap?location=${vv.drive_state.corrected_longitude},${vv.drive_state.corrected_latitude}&zoom=16&size=750*750&key=ee95e52bf08006f63fd29bcfbcf21df0)'>
-        <span class="material-symbols-outlined marker" style="transform: rotate(${vv.drive_state.heading}deg);">navigation</span>
-      </div>
-    </div>`;
+  var bingMap = maps[vv.id_s];
+  if (
+    bingMap &&
+    (vv.drive_state.shift_state === "P" || vv.drive_state.shift_state === "R")
+  ) {
+    updateMap(bingMap, vv);
+  } else if (!bingMap) {
+    let content = document.createElement("div");
+    content.style.width = "100%";
+    let map = document.createElement("div");
+    map.classList.add("map");
+    map.id = `map-${vv.id_s}`;
+    content.appendChild(map);
+    viewLocation.appendChild(content);
+    let mapDom = viewLocation.querySelector(`#map-${vv.id_s}`);
+    buildMap(mapDom, vv);
+  }
 
   viewAction.innerHTML = `<div style='width:100%'>
     <center class="model">
@@ -522,9 +583,151 @@ function buildContent(view, data) {
   buildFooter(footerView, data);
 }
 
+function login(ev) {
+  var account = document.getElementById("email");
+  vscode.postMessage({ command: "login", email: account.value });
+}
+function reset(event) {
+  var account = document.getElementById("email");
+  var tip = document.getElementById("tip");
+  var url_tip = document.getElementById("login-url");
+  var url = document.getElementById("url");
+  var reset_btn = document.getElementById("reset");
+  var verify_btn = document.getElementById("verify");
+  account.value = "";
+  account.disabled = false;
+  url.value = "";
+  url.disabled = true;
+  url.dataset.verifier = undefined;
+  tip.classList.add("disabled");
+  reset_btn.disabled = true;
+  verify_btn.disabled = true;
+}
+function urlcheck(ev) {
+  var url = document.getElementById("url");
+  var verify_btn = document.getElementById("verify");
+  if (!url.dataset.verifier) {
+    verify_btn.disabled = true;
+    return;
+  }
+  if (url.value) {
+    verify_btn.disabled = false;
+  } else {
+    verify_btn.disabled = true;
+  }
+}
+function verify(ev) {
+  var url = document.getElementById("url");
+  vscode.postMessage({
+    command: "verify",
+    url: url.value,
+    verifier: url.dataset.verifier,
+  });
+}
+
 window.addEventListener("message", (event) => {
   const message = event.data;
   switch (message.command) {
+    case "login": {
+      clearMaps();
+      document.body.innerHTML = `
+      <body>
+        <style>
+          body {
+            height:100vh;
+            padding: 0 8px;
+          }
+          #logo {
+            width: 100px;
+            margin: 0 auto 40px auto;
+            display: flex;
+            filter: contrast(0.1);
+          }
+          #email, #url {
+            width: 100%;
+          }
+          #tip {
+            margin: 16px auto;
+          }
+          #tip.disabled {
+            opacity: var(--disabled-opacity);
+          }
+          #tip.disabled #login-url {
+            background-color: gray;
+            cursor: default;
+          }
+          #login-url {
+            border-radius: 50%;
+            padding: 4px;
+            background-color: red;
+            cursor: pointer;
+          }
+          #tip img {
+            width: 18px;
+            margin-bottom: -6px;
+          }
+          #reset, #verify {
+            display: inline-flex;
+            width: calc(50% - 2px);
+            margin-top: 20px;
+          }
+        </style>
+        <div style='margin: 0 auto; padding-top: 50px; max-width: 260px;'>
+          <img id='logo' src='https://file%2B.vscode-resource.vscode-cdn.net${message.logo}'>
+          <vscode-text-field type="email" id="email" name="email" placeholder="Tesla Account Email" onchange='login(event)'>1. Input account email</vscode-text-field>
+          <div id='tip' class='disabled'>
+          2. Login from 
+          <a id='login-url'>
+            <img src='https://file%2B.vscode-resource.vscode-cdn.net${message.logo}'>
+          </a>
+          </div>
+          <vscode-text-field type="url" id="url" name="url" placeholder="Tesla Verification URL" oninput='urlcheck(event)' disabled>3. Paste returned URL</vscode-text-field>
+          <vscode-button title='Reset' appearance="secondary" id='reset' onclick='reset(event)' disabled>Reset</vscode-button>
+          <vscode-button title='Verify Account' id='verify' onclick='verify(event)' disabled>Login</vscode-button>
+        </div>`;
+      break;
+    }
+    case "login-url": {
+      var account = document.getElementById("email");
+      var tip = document.getElementById("tip");
+      var url_tip = document.getElementById("login-url");
+      var url = document.getElementById("url");
+      var reset_btn = document.getElementById("reset");
+      url.dataset.verifier = message.verifier;
+      account.disabled = true;
+      url.disabled = false;
+      url_tip.href = message.url;
+      tip.classList.remove("disabled");
+      reset_btn.disabled = false;
+      break;
+    }
+    case "froze": {
+      clearMaps();
+      document.body.innerHTML = `
+      <div style='height:100vh; padding: 0 8px'>
+        <div>
+          <img src='https://file%2B.vscode-resource.vscode-cdn.net${message.logo}' style='width: 100px; margin: 0 auto 50px auto; padding-top: 100px; display: flex; filter: contrast(0.1);'>
+        </div>
+        <vscode-button title='Unfreeze' data-command='unfreeze' class='big'>Unfreeze</vscode-button>
+      </div>`;
+      break;
+    }
+    case "vehicleList": {
+      let data = message.data;
+      let vehicleTab = "";
+      let vehicleView = "";
+      for (let idx = 0; idx < data.length; idx++) {
+        let v = data[idx];
+        vehicleTab += `<vscode-panel-tab>${v.display_name}</vscode-panel-tab>`;
+        vehicleView += `<vscode-panel-view id='${v.id_s}' class='container'>
+                        </vscode-panel-view>`;
+      }
+      let panels = `<vscode-panels class='main'>
+                      ${data.length > 1 ? vehicleTab : ""}${vehicleView}
+                    </vscode-panels>`;
+      document.body.innerHTML = panels;
+      break;
+    }
     case "vehicle": {
       var view = document.getElementById(message.data.id_s);
       buildFramework(view, message.data);
@@ -537,4 +740,8 @@ window.addEventListener("message", (event) => {
       break;
     }
   }
+});
+
+window.addEventListener("load", (event) => {
+  vscode.postMessage({ command: "loaded" });
 });

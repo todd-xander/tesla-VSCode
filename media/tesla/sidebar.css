@@ -27,19 +27,11 @@ a:focus {
   margin: 10px 0;
 }
 
-.locIcon {
-  color: var(--progress-background);
-}
-
-.locIcon .material-symbols-outlined {
-  font-size: 0.7em;
-  margin: 0 8px;
-}
-
 .car-img {
   margin: 0 auto;
   display: block;
   margin-bottom: -20px;
+  filter: brightness(1.2);
 }
 .drive-info {
   font-family: var(--vscode-editor-font-family);
@@ -152,28 +144,20 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
 .debug {
   display: none;
 }
-
 .map {
   height: 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 600px 600px;
-  filter: invert(1);
-  overflow: hidden;
-  background-color: var(--background);
-  background-blend-mode: difference;
 }
-.map .marker {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background-color: var(--link-foreground);
-  border-radius: 50% 50% 20% 20%;
-}
-@media only screen and (min-width: 600px) {
-  .map {
-    background-size: cover;
-  }
+.vscode-dark .map {
+  filter: invert(1) hue-rotate(180deg);
+  -webkit-mask-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0%, rgba(0, 0, 0, 0)),
+    color-stop(10%, rgba(0, 0, 0, 1)),
+    color-stop(80%, rgba(0, 0, 0, 1)),
+    color-stop(100%, rgba(0, 0, 0, 0))
+  );
 }
 .control-view-content {
   height: calc(100vh - 465px);
