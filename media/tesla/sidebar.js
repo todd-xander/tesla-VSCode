@@ -174,7 +174,12 @@ function buildBasicInfo(infoView, vv) {
   }
 
   let batteryIcon = "";
-  if (vv.charge_state.battery_level == 100) {
+  let charging_state = vv.charge_state.charging_state;
+  let charge_style = "";
+  if (charging_state == "Charging") {
+    batteryIcon = "battery_charging_full";
+    charge_style = "style='color:var(--progress-background);'";
+  } else if (vv.charge_state.battery_level == 100) {
     batteryIcon = "battery_full";
   } else if (vv.charge_state.battery_level < 10) {
     batteryIcon = "battery_alert";
@@ -191,18 +196,19 @@ function buildBasicInfo(infoView, vv) {
   if (vv.gui_settings.gui_temperature_units === "F") {
     temp = `${Math.floor(vv.climate_state.inside_temp * 1.8 + 32.5)}°F`;
   }
+
   infoView.innerHTML = `
     ${basicInfo}
     <div class='state-info'>
-      <span>
-        <span class="material-symbols-outlined">${batteryIcon}</span>
+      <span title="Power ${charging_state}">
+        <span class="material-symbols-outlined" ${charge_style}>${batteryIcon}</span>
         ${vv.charge_state.battery_level}%
       </span>
-      <span>
+      <span title="Battery Range: ${range}">
         <span class="material-symbols-outlined">speed</span>
         ${range}
       </span>
-      <span>
+      <span title="Interior Temperature: ${temp}">
         <span class="material-symbols-outlined">device_thermostat</span>
         ${temp}
       </span>
@@ -223,10 +229,10 @@ function buildShortcutView(shortcutView, vv) {
   }
 
   let startupBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Remote Startup: Off'><span class='material-symbols-outlined'>key_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Remote Startup: Off'><span class='material-symbols-outlined'>power_settings_new</span></vscode-button>";
   if (vv.vehicle_state.remote_start) {
     startupBtn =
-      "<vscode-button class='shortcut' title='Remote Startup: On'><span class='material-symbols-outlined'>key</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Remote Startup: On'><span class='material-symbols-outlined'>power_settings_new</span></vscode-button>";
   }
 
   let climateBtn =
@@ -314,7 +320,7 @@ function buildShortcutView(shortcutView, vv) {
         <vscode-divider></vscode-divider>
         <div class='shortcuts'>
           ${lockBtn}
-          ${chargeBtn}
+          ${startupBtn}
           ${frunk}
           ${trunk}
           ${climateBtn}
@@ -359,10 +365,10 @@ function buildControlPanels(controlView, vv) {
       let shortcuts = document.createElement("div");
       shortcuts.classList.add("shortcuts");
       shortcuts.innerHTML = `
-          <vscode-button class="shortcut" appearance="secondary" title="Location" current-value=""><span class="material-symbols-outlined">pin_drop</span></vscode-button>
-          <vscode-button class="shortcut" appearance="secondary" title="Navigation" current-value=""><span class="material-symbols-outlined">navigation</span></vscode-button>
-          <vscode-button class="shortcut" appearance="secondary" title="EV Station" current-value=""><span class="material-symbols-outlined">ev_station</span></vscode-button>
-          <vscode-button class="shortcut" appearance="secondary" title="Monitoring" current-value=""><span class="material-symbols-outlined">monitoring</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="Location" current-value=""><span class="material-symbols-outlined">pin_drop</span><span class="label">Location</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="Navigation" current-value=""><span class="material-symbols-outlined">navigation</span><span class="label">Navigation</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="EV Station" current-value=""><span class="material-symbols-outlined">ev_station</span><span class="label">EV Station</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="Monitoring" current-value=""><span class="material-symbols-outlined">monitoring</span><span class="label">Monitoring</span></vscode-button>
       `;
       content.appendChild(shortcuts);
 
@@ -390,10 +396,10 @@ function buildControlPanels(controlView, vv) {
         </div>
       </div>
       <div class="shortcuts">
-        <vscode-button class='shortcut' appearance='secondary' title='Lock Doors'><span class='material-symbols-outlined'>lock</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Honk Horn'><span class='material-symbols-outlined'>volume_up</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Flash Headlights'><span class='material-symbols-outlined'>flare</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Ventilate'><span class="material-symbols-outlined">sim_card_download</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Unlock Doors'><span class='material-symbols-outlined'>lock</span><span class="label">Unlock Doors</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Honk Horn'><span class='material-symbols-outlined'>volume_up</span><span class="label">Honk Horn</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Flash Lights'><span class='material-symbols-outlined'>flare</span><span class="label">Flash Lights</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Ventilate'><span class="material-symbols-outlined">sim_card_download</span><span class="label">Ventilate</span></vscode-button>
       </div>
     </center>
     </div>`;
@@ -570,13 +576,11 @@ function buildFramework(view, data) {
                 <vscode-panel-tab title='Location'><span class="material-symbols-outlined">map</span><span class='view-label'>Location</span></vscode-panel-tab>
                 <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span><span class='view-label'>Aaction</span></vscode-panel-tab>
                 <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span><span class='view-label'>Climate</span></vscode-panel-tab>
-                <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">queue_music</span><span class='view-label'>Media</span></vscode-panel-tab>
                 <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span><span class='view-label'>Charge</span></vscode-panel-tab>
                 <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span><span class='view-label'>Security</span></vscode-panel-tab>
                 <vscode-panel-view class='control-view-content control-view-location'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-action'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-climate'></vscode-panel-view>
-                <vscode-panel-view class='control-view-content control-view-media'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-charge'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-security'></vscode-panel-view>
               </vscode-panels>

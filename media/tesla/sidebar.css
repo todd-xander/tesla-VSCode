@@ -58,6 +58,7 @@ a:focus {
 .state-info > span {
   width: calc(33% - 2px);
   display: inline-grid;
+  cursor: pointer;
 }
 
 .shortcuts .shortcut {
@@ -158,6 +159,28 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
 .bm_bottomLeftOverlay {
   display: none;
 }
+
+.control-view-content .shortcut {
+  max-width: initial;
+}
+
+.control-view-content .shortcut .material-symbols-outlined {
+  margin-right: 6px;
+}
+
+.control-view-content .shortcut .label {
+  display: contents;
+}
+
+@media screen and (max-width: 600px) {
+  .control-view-content .shortcut .material-symbols-outlined {
+    margin-right: 0;
+  }
+  .control-view-content .shortcut .label {
+    display: none;
+  }
+}
+
 .control-view-content {
   height: 100%;
   padding: 0 0px;
@@ -268,7 +291,7 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
   height: 35px;
   margin-top: 30px;
   margin-left: 10px;
-  width: calc(100% - 8px - 24px);
+  width: calc(100% - 20px - 24px);
   border: 2px solid var(--divider-background);
   border-radius: 2px;
 }
@@ -318,7 +341,7 @@ body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
   margin-top: 8px;
 }
 .charge-limit-set {
-  width: calc(100% - 8px - 24px);
+  width: calc(100% - 18px - 24px);
   -webkit-appearance: none;
   appearance: none;
   height: 1px;
