@@ -1,3 +1,7 @@
+function makeURL(path) {
+  return `https://file%2B.vscode-resource.vscode-cdn.net${path.join("/")}`;
+}
+
 let poll = {};
 
 function startPollingVehicleState(vid, interval) {
@@ -65,9 +69,7 @@ function toggleAutoRenew(ev) {
 let maps = {};
 
 function buildMap(node, v) {
-  if (maps[v.id_s]) {
-    maps[v.id_s].dispose();
-  }
+  clearMaps(v.id_s);
   var map = new Microsoft.Maps.Map(node, {
     credentials:
       "An_6ByRH6GN7uClufsDPzCH1A4rWipnVD2xgUYbYQPQo30fnm5zm3a1IW7mehszk",
@@ -79,7 +81,6 @@ function buildMap(node, v) {
     showDashboard: false,
     showLocateMeButton: false,
     showMapTypeSelector: false,
-    showScalebar: false,
     showZoomButtons: false,
   });
   var center = map.getCenter();
@@ -123,7 +124,9 @@ function clearMaps(id) {
   for (var i in maps) {
     if (!id || id === i) {
       var m = maps[i];
-      m.dispose();
+      if (m) {
+        m.dispose();
+      }
       maps[i] = undefined;
     }
   }
@@ -325,6 +328,7 @@ function buildShortcutView(shortcutView, vv) {
 
 function buildControlPanels(controlView, vv) {
   if (vv.state == "asleep") {
+    clearMaps(vv.id_s);
     return;
   }
 
@@ -341,25 +345,49 @@ function buildControlPanels(controlView, vv) {
   ) {
     updateMap(bingMap, vv);
   } else if (!bingMap) {
-    let content = document.createElement("div");
-    content.style.width = "100%";
-    let map = document.createElement("div");
-    map.classList.add("map");
-    map.id = `map-${vv.id_s}`;
-    content.appendChild(map);
-    viewLocation.appendChild(content);
+    viewLocation.innerHTML = "";
     let mapDom = viewLocation.querySelector(`#map-${vv.id_s}`);
+    if (!mapDom) {
+      let content = document.createElement("div");
+      content.id = `map-box-${vv.id_s}`;
+
+      let map = document.createElement("div");
+      map.classList.add("map");
+      map.id = `map-${vv.id_s}`;
+      content.appendChild(map);
+
+      let shortcuts = document.createElement("div");
+      shortcuts.classList.add("shortcuts");
+      shortcuts.innerHTML = `
+          <vscode-button class="shortcut" appearance="secondary" title="Location" current-value=""><span class="material-symbols-outlined">pin_drop</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="Navigation" current-value=""><span class="material-symbols-outlined">navigation</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="EV Station" current-value=""><span class="material-symbols-outlined">ev_station</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="Monitoring" current-value=""><span class="material-symbols-outlined">monitoring</span></vscode-button>
+      `;
+      content.appendChild(shortcuts);
+
+      viewLocation.appendChild(content);
+      mapDom = viewLocation.querySelector(`#map-${vv.id_s}`);
+    }
     buildMap(mapDom, vv);
   }
 
-  viewAction.innerHTML = `<div style='width:100%'>
+  viewAction.innerHTML = `<div>
     <center class="model">
       <div class="above-view-model">
         <vscode-button class="action-btn">FRUNK</vscode-button>
         <vscode-button class="action-btn">SUNROOF</vscode-button>
         <vscode-button class="action-btn last">TRUNK</vscode-button>
         <vscode-button class="action-btn charger"><span class="material-symbols-outlined" style="font-size: 1.3em">settings_input_svideo</span></vscode-button>
-        <div class="model-bg" style="margin-top: -375px; background-image: url(https://file%2B.vscode-resource.vscode-cdn.net${vv.baseUrl}/media/Tesla-Model-3.svg)"></div>
+        <div class="model-bg" style="background-image: 
+            url(${makeURL([vv.baseUrl, "media", "Tesla-Model-3.svg"])})">
+        </div>
+        <div class="tpms_pressure">
+          <div class='fl'>${vv.vehicle_state.tpms_pressure_fl || "--"} bar</div>
+          <div class='fr'>${vv.vehicle_state.tpms_pressure_fr || "--"} bar</div>
+          <div class='rl'>${vv.vehicle_state.tpms_pressure_rl || "--"} bar</div>
+          <div class='rr'>${vv.vehicle_state.tpms_pressure_rr || "--"} bar</div>
+        </div>
       </div>
       <div class="shortcuts">
         <vscode-button class='shortcut' appearance='secondary' title='Lock Doors'><span class='material-symbols-outlined'>lock</span></vscode-button>
@@ -370,11 +398,13 @@ function buildControlPanels(controlView, vv) {
     </center>
     </div>`;
 
-  viewClimate.innerHTML = `<div style='width:100%'>
+  viewClimate.innerHTML = `<div>
     <center class="model scaled">
       <div class="above-view-model ${vv.driverPosition}">
         <span class="material-symbols-outlined steering">donut_large</span>
-        <div class="model-bg" style="background-image: url(https://file%2B.vscode-resource.vscode-cdn.net${vv.baseUrl}/media/Tesla-Model-3.svg)"></div>
+        <div class="model-bg" style="background-image:
+             url(${makeURL([vv.baseUrl, "media", "Tesla-Model-3.svg"])})">
+        </div>
       </div>
     </center>
     </div>`;
@@ -412,7 +442,7 @@ function buildControlPanels(controlView, vv) {
     }
   }
 
-  viewCharge.innerHTML = `<div style='width:100%'>
+  viewCharge.innerHTML = `<div>
     ${progressInfo}
     ${stateInfo}
     </div>`;
@@ -438,7 +468,7 @@ function buildControlPanels(controlView, vv) {
     speedLimit += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
   }
   viewSecurity.innerHTML = `
-    <div style='width:100%'>
+    <div>
       <vscode-divider></vscode-divider>
       <div class='switcher'>${sentry}</div>
       <vscode-divider></vscode-divider>
@@ -521,6 +551,7 @@ function buildFooter(footerView, vv) {
 }
 
 function buildFramework(view, data) {
+  clearMaps();
   view.innerHTML = `
         <div title="Auto Renew"
           data-vid="${data.id_s}"
@@ -539,11 +570,13 @@ function buildFramework(view, data) {
                 <vscode-panel-tab title='Location'><span class="material-symbols-outlined">map</span><span class='view-label'>Location</span></vscode-panel-tab>
                 <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span><span class='view-label'>Aaction</span></vscode-panel-tab>
                 <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span><span class='view-label'>Climate</span></vscode-panel-tab>
+                <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">queue_music</span><span class='view-label'>Media</span></vscode-panel-tab>
                 <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span><span class='view-label'>Charge</span></vscode-panel-tab>
                 <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span><span class='view-label'>Security</span></vscode-panel-tab>
                 <vscode-panel-view class='control-view-content control-view-location'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-action'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-climate'></vscode-panel-view>
+                <vscode-panel-view class='control-view-content control-view-media'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-charge'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-security'></vscode-panel-view>
               </vscode-panels>
@@ -555,6 +588,9 @@ function buildFramework(view, data) {
 }
 
 function buildContent(view, data) {
+  if (!view) {
+    return;
+  }
   var ts;
   if (data.state === "asleep") {
     if (!view.classList.contains("asleep")) {
@@ -673,12 +709,12 @@ window.addEventListener("message", (event) => {
           }
         </style>
         <div style='margin: 0 auto; padding-top: 50px; max-width: 260px;'>
-          <img id='logo' src='https://file%2B.vscode-resource.vscode-cdn.net${message.logo}'>
+          <img id='logo' src='${makeURL([message.logo])}'>
           <vscode-text-field type="email" id="email" name="email" placeholder="Tesla Account Email" onchange='login(event)'>1. Input account email</vscode-text-field>
           <div id='tip' class='disabled'>
           2. Login from 
           <a id='login-url'>
-            <img src='https://file%2B.vscode-resource.vscode-cdn.net${message.logo}'>
+            <img src='${makeURL([message.logo])}'>
           </a>
           </div>
           <vscode-text-field type="url" id="url" name="url" placeholder="Tesla Verification URL" oninput='urlcheck(event)' disabled>3. Paste returned URL</vscode-text-field>
@@ -706,7 +742,8 @@ window.addEventListener("message", (event) => {
       document.body.innerHTML = `
       <div style='height:100vh; padding: 0 8px'>
         <div>
-          <img src='https://file%2B.vscode-resource.vscode-cdn.net${message.logo}' style='width: 100px; margin: 0 auto 50px auto; padding-top: 100px; display: flex; filter: contrast(0.1);'>
+          <img src='${makeURL([message.logo])}'
+               style='width: 100px; margin: 0 auto 50px auto; padding-top: 100px; display: flex; filter: contrast(0.1);'>
         </div>
         <vscode-button title='Unfreeze' data-command='unfreeze' class='big'>Unfreeze</vscode-button>
       </div>`;
