@@ -275,9 +275,9 @@ function buildShortcutView(shortcutView, vv) {
   }
 
   let hornBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Honk Horn'><span class='material-symbols-outlined'>volume_up</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-outlined'>volume_up</span></vscode-button>";
   let falshBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Flash Headlights'><span class='material-symbols-outlined'>flare</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Flash'><span class='material-symbols-outlined'>flare</span></vscode-button>";
   let defrost =
     "<vscode-button class='shortcut' appearance='secondary' title='Defrost Mode: Off'><span class='material-symbols-outlined'>astrophotography_off</span></vscode-button>";
   if (vv.climate_state.defrost_mode !== 0) {
@@ -400,10 +400,10 @@ function buildControlPanels(controlView, vv) {
         </div>
       </div>
       <div class="shortcuts">
-        <vscode-button class='shortcut' appearance='secondary' title='Unlock Doors'><span class='material-symbols-outlined'>lock</span><span class="label">Unlock Doors</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Honk Horn'><span class='material-symbols-outlined'>volume_up</span><span class="label">Honk Horn</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Flash Lights'><span class='material-symbols-outlined'>flare</span><span class="label">Flash Lights</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Ventilate'><span class="material-symbols-outlined">sim_card_download</span><span class="label">Ventilate</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Unlock'><span class='material-symbols-outlined'>lock</span><span class="label">Unlock</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-outlined'>volume_up</span><span class="label">Honk</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Flash'><span class='material-symbols-outlined'>flare</span><span class="label">Flash</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Vent'><span class="material-symbols-outlined">sim_card_download</span><span class="label">Vent</span></vscode-button>
       </div>
     </center>
     </div>`;
