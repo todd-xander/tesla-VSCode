@@ -384,14 +384,15 @@ function buildControlPanels(controlView, vv) {
   var p_rr = vv.vehicle_state.tpms_pressure_rr;
   viewAction.innerHTML = `<div>
     <center class="model">
-      <div class="above-view-model">
+      <div class="above-view-model" style="--vehicle-image: url(${makeURL([
+        vv.baseUrl,
+        "media",
+        "Tesla-Model-3.svg",
+      ])})">
         <vscode-button class="action-btn">FRUNK</vscode-button>
         <vscode-button class="action-btn">SUNROOF</vscode-button>
         <vscode-button class="action-btn last">TRUNK</vscode-button>
         <vscode-button class="action-btn charger"><span class="material-symbols-outlined" style="font-size: 1.3em">settings_input_svideo</span></vscode-button>
-        <div class="model-bg" style="background-image: 
-            url(${makeURL([vv.baseUrl, "media", "Tesla-Model-3.svg"])})">
-        </div>
         <div class="tpms_pressure">
           <div class='fl'>${p_fl ? p_fl.toFixed(1) : "--"} bar</div>
           <div class='fr'>${p_fr ? p_fr.toFixed(1) : "--"} bar</div>
@@ -408,16 +409,39 @@ function buildControlPanels(controlView, vv) {
     </center>
     </div>`;
 
-  viewClimate.innerHTML = `<div>
+  let climate = vv.climate_state;
+  let in_temp = `${Math.floor(climate.inside_temp + 0.5)}°C`;
+  let out_temp = `${Math.floor(climate.outside_temp + 0.5)}°C`;
+  let dr_tmp = `${Math.floor(climate.driver_temp_setting + 0.5)}°C`;
+  let pg_tmp = `${Math.floor(climate.passenger_temp_setting + 0.5)}°C`;
+  if (vv.gui_settings.gui_temperature_units === "F") {
+    in_temp = `${Math.floor(climate.inside_temp * 1.8 + 32.5)}°F`;
+    out_temp = `${Math.floor(climate.outside_temp * 1.8 + 32.5)}°F`;
+    dr_tmp = `${Math.floor(climate.driver_temp_setting * 1.8 + 32.5)}°F`;
+    pg_tmp = `${Math.floor(climate.passenger_temp_setting * 1.8 + 32.5)}°F`;
+  }
+  viewClimate.innerHTML = `
+  <div>
     <center class="model scaled">
-      <div class="above-view-model ${vv.driverPosition}">
+      <div class="above-view-model ${vv.driverPosition}"
+           style="--vehicle-image: url(${makeURL([
+             vv.baseUrl,
+             "media",
+             "Tesla-Model-3.svg",
+           ])})">
         <span class="material-symbols-outlined steering">donut_large</span>
-        <div class="model-bg" style="background-image:
-             url(${makeURL([vv.baseUrl, "media", "Tesla-Model-3.svg"])})">
-        </div>
       </div>
     </center>
-    </div>`;
+    <div class="io_temp">Interior ${in_temp} / ${out_temp} Exterior</div>
+    <div class="temp_control">
+    <vscode-button appearance="icon" class="left"><span class='material-symbols-outlined'>arrow_left</span></vscode-button>
+    <vscode-tag>${dr_tmp}</vscode-tag>
+    <vscode-button appearance="icon" class="right"><span class="material-symbols-outlined">arrow_right</span></vscode-button>
+    <vscode-button appearance="icon" class="left"><span class='material-symbols-outlined'>arrow_left</span></vscode-button>
+    <vscode-tag>${pg_tmp}</vscode-tag>
+    <vscode-button appearance="icon" class="right"><span class="material-symbols-outlined">arrow_right</span></vscode-button>
+    </div>
+  </div>`;
 
   var current = vv.charge_state.charger_actual_current;
   var voltage = vv.charge_state.charger_voltage;
@@ -477,6 +501,8 @@ function buildControlPanels(controlView, vv) {
   } else {
     speedLimit += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
   }
+
+  let notifications = `<span class='material-symbols-outlined'>notifications</span><span class='label'>Notifications</span>`;
   viewSecurity.innerHTML = `
     <div>
       <vscode-divider></vscode-divider>
@@ -485,6 +511,8 @@ function buildControlPanels(controlView, vv) {
       <div class='switcher'>${valet}</div>
       <vscode-divider></vscode-divider>
       <div class='switcher'>${speedLimit}</div>
+      <vscode-divider></vscode-divider>
+      <div class='switcher'>${notifications}</div>
       <vscode-divider></vscode-divider>
       <div class='debug' style='user-select: text; white-space: pre;'>
         ${JSON.stringify(vv, null, 2)}
