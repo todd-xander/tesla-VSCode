@@ -347,7 +347,7 @@ function buildControlPanels(controlView, vv) {
   var bingMap = maps[vv.id_s];
   if (
     bingMap &&
-    (vv.drive_state.shift_state === "P" || vv.drive_state.shift_state === "R")
+    (vv.drive_state.shift_state === "D" || vv.drive_state.shift_state === "R")
   ) {
     updateMap(bingMap, vv);
   } else if (!bingMap) {
@@ -378,6 +378,10 @@ function buildControlPanels(controlView, vv) {
     buildMap(mapDom, vv);
   }
 
+  var p_fl = vv.vehicle_state.tpms_pressure_fl;
+  var p_fr = vv.vehicle_state.tpms_pressure_fr;
+  var p_rl = vv.vehicle_state.tpms_pressure_rl;
+  var p_rr = vv.vehicle_state.tpms_pressure_rr;
   viewAction.innerHTML = `<div>
     <center class="model">
       <div class="above-view-model">
@@ -389,10 +393,10 @@ function buildControlPanels(controlView, vv) {
             url(${makeURL([vv.baseUrl, "media", "Tesla-Model-3.svg"])})">
         </div>
         <div class="tpms_pressure">
-          <div class='fl'>${vv.vehicle_state.tpms_pressure_fl || "--"} bar</div>
-          <div class='fr'>${vv.vehicle_state.tpms_pressure_fr || "--"} bar</div>
-          <div class='rl'>${vv.vehicle_state.tpms_pressure_rl || "--"} bar</div>
-          <div class='rr'>${vv.vehicle_state.tpms_pressure_rr || "--"} bar</div>
+          <div class='fl'>${p_fl ? p_fl.toFixed(1) : "--"} bar</div>
+          <div class='fr'>${p_fr ? p_fr.toFixed(1) : "--"} bar</div>
+          <div class='rl'>${p_rl ? p_rl.toFixed(1) : "--"} bar</div>
+          <div class='rr'>${p_rr ? p_rr.toFixed(1) : "--"} bar</div>
         </div>
       </div>
       <div class="shortcuts">
