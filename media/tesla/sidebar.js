@@ -37,7 +37,7 @@ function buildSyncBtn(view, vid, ts) {
     if (!view.classList.contains("enable")) {
       view.classList.add("enable");
     }
-    view.innerHTML = `<span class="material-symbols-outlined syncBtn">sync</span>
+    view.innerHTML = `<span class="material-symbols-rounded syncBtn">sync</span>
                       <span class='timestamp'>
                         ${timestr}
                       </span>`;
@@ -45,7 +45,7 @@ function buildSyncBtn(view, vid, ts) {
     if (view.classList.contains("enable")) {
       view.classList.remove("enable");
     }
-    view.innerHTML = `<span class="material-symbols-outlined syncBtn">sync_disabled</span>
+    view.innerHTML = `<span class="material-symbols-rounded syncBtn">sync_disabled</span>
                         <span class='timestamp'>
                           ${timestr}
                         </span>`;
@@ -86,9 +86,9 @@ function buildMap(node, v) {
   var center = map.getCenter();
   var pin = new Microsoft.Maps.Pushpin(center, {
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 48 48" fill="none" style="transform: rotate(${v.drive_state.heading}deg);">
-            <rect width="48" height="48" fill="white" fill-opacity="0.01"/>
             <path d="M24.5 4L9 44L24.5 34.9091L40 44L24.5 4Z" fill="#2F88FF" stroke="black" stroke-width="4" stroke-linejoin="round"/>
           </svg>`,
+    anchor: new Microsoft.Maps.Point(12, 12),
   });
 
   map.entities.push(pin);
@@ -175,10 +175,8 @@ function buildBasicInfo(infoView, vv) {
 
   let batteryIcon = "";
   let charging_state = vv.charge_state.charging_state;
-  let charge_style = "";
   if (charging_state == "Charging") {
     batteryIcon = "battery_charging_full";
-    charge_style = "style='color:var(--progress-background);'";
   } else if (vv.charge_state.battery_level == 100) {
     batteryIcon = "battery_full";
   } else if (vv.charge_state.battery_level < 10) {
@@ -187,6 +185,22 @@ function buildBasicInfo(infoView, vv) {
     let lvl = Math.floor((vv.charge_state.battery_level + 5) / 15);
     batteryIcon = `battery_${lvl}_bar`;
   }
+
+  var battery_level = vv.charge_state.battery_level;
+  var charge_limit = vv.charge_state.charge_limit_soc;
+  let charging_lable = "";
+  let charge_style = "style='color:var(--progress-background);'";
+  if (charging_state == "Charging") {
+    charging_lable = `Charging ${battery_level}%/${charge_limit}%`;
+  } else if (charging_state == "Complete") {
+    charging_lable = `Charging Complete`;
+  } else if (charging_state == "Stopped") {
+    charging_lable = `Charging Stopped`;
+  } else if (charging_state == "Disconnected") {
+    charging_lable = `Charger Disconnected`;
+    charge_style = "";
+  }
+
   let range = `${Math.floor(vv.charge_state.battery_range + 0.5)}mi`;
   if (vv.gui_settings.gui_distance_units === "km/hr") {
     range = `${Math.floor(vv.charge_state.battery_range * 1.609344 + 0.5)}km`;
@@ -200,16 +214,16 @@ function buildBasicInfo(infoView, vv) {
   infoView.innerHTML = `
     ${basicInfo}
     <div class='state-info'>
-      <span title="Power ${charging_state}">
-        <span class="material-symbols-outlined" ${charge_style}>${batteryIcon}</span>
-        ${vv.charge_state.battery_level}%
+      <span title="${charging_lable}">
+        <span class="material-symbols-rounded" ${charge_style}>${batteryIcon}</span>
+        ${battery_level}%
       </span>
       <span title="Battery Range: ${range}">
-        <span class="material-symbols-outlined">speed</span>
+        <span class="material-symbols-rounded">speed</span>
         ${range}
       </span>
       <span title="Interior Temperature: ${temp}">
-        <span class="material-symbols-outlined">device_thermostat</span>
+        <span class="material-symbols-rounded">device_thermostat</span>
         ${temp}
       </span>
     </div>
@@ -222,28 +236,28 @@ function buildShortcutView(shortcutView, vv) {
     return;
   }
   let lockBtn =
-    "<vscode-button class='shortcut' title='Doors: Unlocked'><span class='material-symbols-outlined'>lock_open</span></vscode-button>";
+    "<vscode-button class='shortcut' title='Doors: Unlocked'><span class='material-symbols-rounded'>lock_open</span></vscode-button>";
   if (vv.vehicle_state.locked) {
     lockBtn =
-      "<vscode-button class='shortcut' appearance='secondary' title='Doors: Locked'><span class='material-symbols-outlined'>lock</span></vscode-button>";
+      "<vscode-button class='shortcut' appearance='secondary' title='Doors: Locked'><span class='material-symbols-rounded'>lock</span></vscode-button>";
   }
 
   let startupBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Remote Startup: Off'><span class='material-symbols-outlined'>power_settings_new</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Remote Startup: Off'><span class='material-symbols-rounded'>power_settings_new</span></vscode-button>";
   if (vv.vehicle_state.remote_start) {
     startupBtn =
-      "<vscode-button class='shortcut' title='Remote Startup: On'><span class='material-symbols-outlined'>power_settings_new</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Remote Startup: On'><span class='material-symbols-rounded'>power_settings_new</span></vscode-button>";
   }
 
   let climateBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Fan Mode: Off'><span class='material-symbols-outlined'>mode_fan_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Fan Mode: Off'><span class='material-symbols-rounded'>mode_fan_off</span></vscode-button>";
   if (vv.climate_state.is_climate_on) {
     climateBtn =
-      "<vscode-button class='shortcut' title='Fan Mode: On'><span class='material-symbols-outlined'>mode_fan</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Fan Mode: On'><span class='material-symbols-rounded'>mode_fan</span></vscode-button>";
   }
 
   let chargeBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Charging: Disconnected'><span class='material-symbols-outlined'>power</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Charging: Disconnected'><span class='material-symbols-rounded'>power</span></vscode-button>";
   if (
     vv.charge_state.charge_port_door_open &&
     vv.charge_state.charge_port_latch === "Engaged"
@@ -264,56 +278,56 @@ function buildShortcutView(shortcutView, vv) {
     }
     var title = `${battery_level}%/${charge_limit}%`;
     if (vv.charge_state.charging_state === "Stopped") {
-      chargeBtn = `<vscode-button class='shortcut' title='Chaging: Stopped ${title}'><span class='material-symbols-outlined'>power</span></vscode-button>`;
+      chargeBtn = `<vscode-button class='shortcut' title='Chaging: Stopped ${title}'><span class='material-symbols-rounded'>power</span></vscode-button>`;
     } else if (vv.charge_state.charging_state === "Complete") {
       title += ` +${added_rated}${distance_unit}`;
-      chargeBtn = `<vscode-button class='shortcut' title='Charging: Complete ${title}'><span class='material-symbols-outlined'>bolt</span></vscode-button>`;
+      chargeBtn = `<vscode-button class='shortcut' title='Charging: Complete ${title}'><span class='material-symbols-rounded'>bolt</span></vscode-button>`;
     } else {
       title += ` +${added_rated}${distance_unit} ${charge_rate}${distance_unit}/hr ${current}A/${voltage}V ${power}kwh ${minutes_to_full_charge}minutes remained`;
-      chargeBtn = `<vscode-button class='shortcut charging' title='Charging: ${title}'><span class='material-symbols-outlined'>bolt</span></vscode-button>`;
+      chargeBtn = `<vscode-button class='shortcut charging' title='Charging: ${title}'><span class='material-symbols-rounded'>bolt</span></vscode-button>`;
     }
   }
 
   let hornBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-outlined'>volume_up</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-rounded'>volume_up</span></vscode-button>";
   let falshBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Flash'><span class='material-symbols-outlined'>flare</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Flash'><span class='material-symbols-rounded'>flare</span></vscode-button>";
   let defrost =
-    "<vscode-button class='shortcut' appearance='secondary' title='Defrost Mode: Off'><span class='material-symbols-outlined'>astrophotography_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Defrost Mode: Off'><span class='material-symbols-rounded'>astrophotography_off</span></vscode-button>";
   if (vv.climate_state.defrost_mode !== 0) {
     defrost =
-      "<vscode-button class='shortcut' title='Defrost Mode: On'><span class='material-symbols-outlined'>auto_awesome</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Defrost Mode: On'><span class='material-symbols-rounded'>auto_awesome</span></vscode-button>";
   }
 
   let frunk =
-    "<vscode-button class='shortcut' appearance='secondary' title='Frunk: Closed'><span class='material-symbols-outlined'>google_travel_outline</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Frunk: Closed'><span class='material-symbols-rounded'>google_travel_outline</span></vscode-button>";
   if (vv.vehicle_state.ft !== 0) {
     frunk =
-      "<vscode-button class='shortcut' title='Frunk: Opened'><span class='material-symbols-outlined'>google_travel_outline</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Frunk: Opened'><span class='material-symbols-rounded'>google_travel_outline</span></vscode-button>";
   }
   let trunk =
-    "<vscode-button class='shortcut' appearance='secondary' title='Trunk: Closed'><span class='material-symbols-outlined'>luggage</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Trunk: Closed'><span class='material-symbols-rounded'>luggage</span></vscode-button>";
   if (vv.vehicle_state.rt !== 0) {
     trunk =
-      "<vscode-button class='shortcut' title='Trunk: Opened'><span class='material-symbols-outlined'>luggage</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Trunk: Opened'><span class='material-symbols-rounded'>luggage</span></vscode-button>";
   }
   let speedLimit =
-    "<vscode-button class='shortcut' appearance='secondary' title='Speed Limit: Off'><span class='material-symbols-outlined'>do_not_disturb_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Speed Limit: Off'><span class='material-symbols-rounded'>do_not_disturb_off</span></vscode-button>";
   if (vv.vehicle_state.speed_limit_mode.active) {
     speedLimit =
-      "<vscode-button class='shortcut' title='Speed Limit: On'><span class='material-symbols-outlined'>do_not_disturb</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Speed Limit: On'><span class='material-symbols-rounded'>do_not_disturb</span></vscode-button>";
   }
   let valet =
-    "<vscode-button class='shortcut' appearance='secondary' title='Valet Mode: Off'><span class='material-symbols-outlined'>group_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Valet Mode: Off'><span class='material-symbols-rounded'>group_off</span></vscode-button>";
   if (vv.vehicle_state.valet_mode) {
     valet =
-      "<vscode-button class='shortcut' title='Valet Mode: On'><span class='material-symbols-outlined'>group</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Valet Mode: On'><span class='material-symbols-rounded'>group</span></vscode-button>";
   }
   let sentry =
-    "<vscode-button class='shortcut' appearance='secondary' title='Sentry Mode: Off'><span class='material-symbols-outlined'>remove_moderator</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Sentry Mode: Off'><span class='material-symbols-rounded'>remove_moderator</span></vscode-button>";
   if (vv.vehicle_state.sentry_mode) {
     sentry =
-      "<vscode-button class='shortcut' title='Sentry Mode: On'><span class='material-symbols-outlined'>shield</span></vscode-button>";
+      "<vscode-button class='shortcut' title='Sentry Mode: On'><span class='material-symbols-rounded'>shield</span></vscode-button>";
   }
 
   shortcutView.innerHTML = `
@@ -365,10 +379,10 @@ function buildControlPanels(controlView, vv) {
       let shortcuts = document.createElement("div");
       shortcuts.classList.add("shortcuts");
       shortcuts.innerHTML = `
-          <vscode-button class="shortcut" appearance="secondary" title="Location" current-value=""><span class="material-symbols-outlined">pin_drop</span><span class="label">Location</span></vscode-button>
-          <vscode-button class="shortcut" appearance="secondary" title="Navigation" current-value=""><span class="material-symbols-outlined">navigation</span><span class="label">Navigation</span></vscode-button>
-          <vscode-button class="shortcut" appearance="secondary" title="EV Station" current-value=""><span class="material-symbols-outlined">ev_station</span><span class="label">EV Station</span></vscode-button>
-          <vscode-button class="shortcut" appearance="secondary" title="Monitoring" current-value=""><span class="material-symbols-outlined">monitoring</span><span class="label">Monitoring</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="Location" current-value=""><span class="material-symbols-rounded">pin_drop</span><span class="label">Location</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="Navigation" current-value=""><span class="material-symbols-rounded">navigation</span><span class="label">Navigation</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="EV Station" current-value=""><span class="material-symbols-rounded">ev_station</span><span class="label">EV Station</span></vscode-button>
+          <vscode-button class="shortcut" appearance="secondary" title="Monitoring" current-value=""><span class="material-symbols-rounded">monitoring</span><span class="label">Monitoring</span></vscode-button>
       `;
       content.appendChild(shortcuts);
 
@@ -378,6 +392,7 @@ function buildControlPanels(controlView, vv) {
     buildMap(mapDom, vv);
   }
 
+  var sunroof = vv.vehicle_config.sun_roof_installed;
   var p_fl = vv.vehicle_state.tpms_pressure_fl;
   var p_fr = vv.vehicle_state.tpms_pressure_fr;
   var p_rl = vv.vehicle_state.tpms_pressure_rl;
@@ -389,11 +404,17 @@ function buildControlPanels(controlView, vv) {
         "media",
         "Tesla-Model-3.svg",
       ])})">
-        <vscode-button class="action-btn">FRUNK</vscode-button>
-        <vscode-button class="action-btn">SUNROOF</vscode-button>
-        <vscode-button class="action-btn last">TRUNK</vscode-button>
-        <vscode-button class="action-btn charger"><span class="material-symbols-outlined" style="font-size: 1.3em">settings_input_svideo</span></vscode-button>
-        <div class="tpms_pressure">
+        <vscode-button class="action-btn" appearance="icon" title="Open Frunk"><span class="material-symbols-rounded">google_travel_outline</span></vscode-button>
+        <vscode-button class="action-btn" appearance="icon" title="Open Sunroof" 
+            style="${sunroof ? "" : "visibility: hidden;"}"
+        >
+          <span class="material-symbols-rounded">sensor_window</span>
+        </vscode-button>
+        <vscode-button class="action-btn last" appearance="icon" title="Open Frunk"><span class="material-symbols-rounded">luggage</span></vscode-button>
+        <vscode-button class="action-btn charger" appearance="icon"><span class="material-symbols-rounded">settings_input_svideo</span></vscode-button>
+        <div class="tpms_pressure"
+             style="${p_fl || p_fr || p_rl || p_rr || "display:none;"}"
+        >
           <div class='fl'>${p_fl ? p_fl.toFixed(1) : "--"} bar</div>
           <div class='fr'>${p_fr ? p_fr.toFixed(1) : "--"} bar</div>
           <div class='rl'>${p_rl ? p_rl.toFixed(1) : "--"} bar</div>
@@ -401,10 +422,10 @@ function buildControlPanels(controlView, vv) {
         </div>
       </div>
       <div class="shortcuts">
-        <vscode-button class='shortcut' appearance='secondary' title='Unlock'><span class='material-symbols-outlined'>lock</span><span class="label">Unlock</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-outlined'>volume_up</span><span class="label">Honk</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Flash'><span class='material-symbols-outlined'>flare</span><span class="label">Flash</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Vent'><span class="material-symbols-outlined">sim_card_download</span><span class="label">Vent</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Unlock'><span class='material-symbols-rounded'>lock</span><span class="label">Unlock</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Start'><span class="material-symbols-rounded">power_settings_new</span><span class="label">Start</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-rounded'>volume_up</span><span class="label">Honk</span></vscode-button>
+        <vscode-button class='shortcut' appearance='secondary' title='Flash'><span class='material-symbols-rounded'>flare</span><span class="label">Flash</span></vscode-button>
       </div>
     </center>
     </div>`;
@@ -420,30 +441,61 @@ function buildControlPanels(controlView, vv) {
     dr_tmp = `${Math.floor(climate.driver_temp_setting * 1.8 + 32.5)}°F`;
     pg_tmp = `${Math.floor(climate.passenger_temp_setting * 1.8 + 32.5)}°F`;
   }
+  let steer_pos = 'style="position: absolute; margin-left: -50px;"';
+  let heater_pos = 'style="position: absolute; margin: 6px auto auto 60px;"';
+  if (vv.driverPosition == "RightHand") {
+    steer_pos = 'style="position: absolute; margin-left: 10px;"';
+    heater_pos = 'style="position: absolute; margin: 6px auto auto 120px;"';
+  }
   viewClimate.innerHTML = `
   <div>
     <center class="model scaled">
-      <div class="above-view-model ${vv.driverPosition}"
+      <div class="above-view-model"
            style="--vehicle-image: url(${makeURL([
              vv.baseUrl,
              "media",
              "Tesla-Model-3.svg",
            ])})">
-        <span class="material-symbols-outlined steering">donut_large</span>
+        <span class="material-symbols-rounded steering" ${steer_pos}>donut_large</span>
+        <vscode-button class="action-btn" appearance="icon" ${heater_pos}>
+          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
+        </vscode-button>
+        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 60px auto auto 60px;">
+          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
+        </vscode-button>
+        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 60px auto auto 120px;">
+          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
+        </vscode-button>
+        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 180px auto auto 60px;">
+          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
+        </vscode-button>
+        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 180px auto auto 90px;">
+          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
+        </vscode-button>
+        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 180px auto auto 120px;">
+          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
+        </vscode-button>
       </div>
     </center>
-    <div class="io_temp">Interior ${in_temp} / ${out_temp} Exterior</div>
+    <div class="io_temp">Interior ${in_temp} · ${out_temp} Exterior</div>
     <div class="temp_control">
-    <vscode-button appearance="icon" class="left"><span class='material-symbols-outlined'>arrow_left</span></vscode-button>
-    <vscode-tag>${dr_tmp}</vscode-tag>
-    <vscode-button appearance="icon" class="right"><span class="material-symbols-outlined">arrow_right</span></vscode-button>
-    <vscode-button appearance="icon" class="left"><span class='material-symbols-outlined'>arrow_left</span></vscode-button>
-    <vscode-tag>${pg_tmp}</vscode-tag>
-    <vscode-button appearance="icon" class="right"><span class="material-symbols-outlined">arrow_right</span></vscode-button>
+      <vscode-button appearance="icon" class="left"><span class='material-symbols-rounded'>arrow_left</span></vscode-button>
+      <vscode-tag>${dr_tmp}</vscode-tag>
+      <vscode-button appearance="icon" class="right"><span class="material-symbols-rounded">arrow_right</span></vscode-button>
+      <vscode-button appearance="icon" class="left"><span class='material-symbols-rounded'>arrow_left</span></vscode-button>
+      <vscode-tag>${pg_tmp}</vscode-tag>
+      <vscode-button appearance="icon" class="right"><span class="material-symbols-rounded">arrow_right</span></vscode-button>
+    </div>
+    <div class="shortcuts">
+      <vscode-button class="shortcut" appearance="secondary" title="A/C" current-value=""><span class="material-symbols-rounded">mode_fan</span><span class="label">A/C</span></vscode-button>
+      <vscode-button class="shortcut" appearance="secondary" title="Defrost" current-value=""><span class="material-symbols-rounded">auto_awesome</span><span class="label">Defrost</span></vscode-button>
+      <vscode-button class="shortcut" appearance="secondary" title="Vent" current-value=""><span class="material-symbols-rounded">sim_card_download</span><span class="label">Vent</span></vscode-button>
+      <vscode-button class="shortcut" appearance="secondary" title="OverHeat Protection" current-value=""><span class="material-symbols-rounded">gpp_maybe</span><span class="label">Overheat</span></vscode-button>
     </div>
   </div>`;
 
   var current = vv.charge_state.charger_actual_current;
+  var max_current = vv.charge_state.charge_current_request_max;
   var voltage = vv.charge_state.charger_voltage;
   var power = vv.charge_state.charger_power;
   var battery_level = vv.charge_state.battery_level;
@@ -452,10 +504,16 @@ function buildControlPanels(controlView, vv) {
   var charge_rate = vv.charge_state.charge_rate;
   var distance_unit = "mi";
   var minutes_to_full_charge = vv.charge_state.minutes_to_full_charge;
+  var time_str = `${minutes_to_full_charge}min`;
   if (vv.gui_settings.gui_distance_units === "km/hr") {
     added_rated = Math.floor(added_rated * 1.609344 + 0.5);
     charge_rate = Math.floor(charge_rate * 1.609344 + 0.5);
     distance_unit = "km";
+  }
+  if (minutes_to_full_charge >= 60) {
+    time_str =
+      `${Match.floor(minutes_to_full_charge / 60)}hr` +
+      ` ${Match.floor(minutes_to_full_charge % 60)}min`;
   }
   var progressInfo = `<div value="${battery_level}" max="100" class="charge-progress">
                         <div class='meter ${vv.charge_state.charging_state}' style='width: ${battery_level}%' data-value="${battery_level}"></div>
@@ -470,9 +528,9 @@ function buildControlPanels(controlView, vv) {
     if (vv.charge_state.charging_state === "Stopped") {
       stateInfo = `<div></div>`;
     } else if (vv.charge_state.charging_state === "Complete") {
-      stateInfo = `<div>+${added_rated}${distance_unit}</div>`;
+      stateInfo = `<div class="charge-info">+${added_rated}${distance_unit}</div>`;
     } else {
-      stateInfo = `<div>+${added_rated}${distance_unit} ${charge_rate}${distance_unit}/hr ${current}A/${voltage}V ${power}kwh ${minutes_to_full_charge}minutes remained</div>`;
+      stateInfo = `<div class="charge-info">~${time_str} · ${current}/${max_current}A · ${voltage}V · ${power}kW</div>`;
     }
   }
 
@@ -481,28 +539,28 @@ function buildControlPanels(controlView, vv) {
     ${stateInfo}
     </div>`;
 
-  let sentry = `<span class='material-symbols-outlined'>shield</span><span class='label'>Sentrey Mode</span>`;
+  let sentry = `<span class='material-symbols-rounded'>shield</span><span class='label'>Sentrey Mode</span>`;
   if (vv.vehicle_state.sentry_mode) {
-    sentry += `<span class='material-symbols-outlined toggle enable'>toggle_on</span>`;
+    sentry += `<span class='material-symbols-rounded toggle enable'>toggle_on</span>`;
   } else {
-    sentry += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
+    sentry += `<span class='material-symbols-rounded toggle'>toggle_off</span>`;
   }
 
-  let valet = `<span class='material-symbols-outlined'>group</span><span class='label'>Valet Mode</span>`;
+  let valet = `<span class='material-symbols-rounded'>group</span><span class='label'>Valet Mode</span>`;
   if (vv.vehicle_state.valet_mode) {
-    valet += `<span class='material-symbols-outlined toggle enable'>toggle_on</span>`;
+    valet += `<span class='material-symbols-rounded toggle enable'>toggle_on</span>`;
   } else {
-    valet += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
+    valet += `<span class='material-symbols-rounded toggle'>toggle_off</span>`;
   }
 
-  let speedLimit = `<span class='material-symbols-outlined'>speed</span><span class='label'>Speed Limit Mode</span>`;
+  let speedLimit = `<span class='material-symbols-rounded'>speed</span><span class='label'>Speed Limit Mode</span>`;
   if (vv.vehicle_state.speed_limit_mode.active) {
-    speedLimit += `<span class='material-symbols-outlined toggle enable'>toggle_on</span>`;
+    speedLimit += `<span class='material-symbols-rounded toggle enable'>toggle_on</span>`;
   } else {
-    speedLimit += `<span class='material-symbols-outlined toggle'>toggle_off</span>`;
+    speedLimit += `<span class='material-symbols-rounded toggle'>toggle_off</span>`;
   }
 
-  let notifications = `<span class='material-symbols-outlined'>notifications</span><span class='label'>Notifications</span>`;
+  let notifications = `<span class='material-symbols-rounded'>notifications</span><span class='label'>Notifications</span>`;
   viewSecurity.innerHTML = `
     <div>
       <vscode-divider></vscode-divider>
@@ -605,11 +663,11 @@ function buildFramework(view, data) {
           <vscode-data-grid-row class="flex-view">
             <vscode-data-grid-cell grid-column="1" class="control-view">
               <vscode-panels>
-                <vscode-panel-tab title='Location'><span class="material-symbols-outlined">map</span><span class='view-label'>Location</span></vscode-panel-tab>
-                <vscode-panel-tab title='Aaction'><span class="material-symbols-outlined">directions_car</span><span class='view-label'>Aaction</span></vscode-panel-tab>
-                <vscode-panel-tab title='Climate'><span class="material-symbols-outlined">ac_unit</span><span class='view-label'>Climate</span></vscode-panel-tab>
-                <vscode-panel-tab title='Charge'><span class="material-symbols-outlined">electrical_services</span><span class='view-label'>Charge</span></vscode-panel-tab>
-                <vscode-panel-tab title='Security'><span class="material-symbols-outlined">security</span><span class='view-label'>Security</span></vscode-panel-tab>
+                <vscode-panel-tab title='Location'><span class="material-symbols-rounded">map</span><span class='view-label'>Location</span></vscode-panel-tab>
+                <vscode-panel-tab title='Aaction'><span class="material-symbols-rounded">directions_car</span><span class='view-label'>Aaction</span></vscode-panel-tab>
+                <vscode-panel-tab title='Climate'><span class="material-symbols-rounded">ac_unit</span><span class='view-label'>Climate</span></vscode-panel-tab>
+                <vscode-panel-tab title='Charge'><span class="material-symbols-rounded">electrical_services</span><span class='view-label'>Charge</span></vscode-panel-tab>
+                <vscode-panel-tab title='Security'><span class="material-symbols-rounded">security</span><span class='view-label'>Security</span></vscode-panel-tab>
                 <vscode-panel-view class='control-view-content control-view-location'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-action'></vscode-panel-view>
                 <vscode-panel-view class='control-view-content control-view-climate'></vscode-panel-view>
