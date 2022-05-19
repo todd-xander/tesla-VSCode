@@ -115,6 +115,7 @@ function updateMap(map, v) {
             <rect width="48" height="48" fill="white" fill-opacity="0.01"/>
             <path d="M24.5 4L9 44L24.5 34.9091L40 44L24.5 4Z" fill="#2F88FF" stroke="black" stroke-width="4" stroke-linejoin="round"/>
           </svg>`,
+    anchor: new Microsoft.Maps.Point(12, 12),
   });
 
   map.entities.push(pin);

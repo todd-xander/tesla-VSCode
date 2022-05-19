@@ -339,6 +339,18 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  private startStreming(v: tjs.Vehicle) {
+    let option = { authToken: this.token || "", vehicleID: v.vehicle_id?.toString() };
+    tjs.setStreamingBaseURI("wss://streaming.vn.cloud.tesla.cn/streaming/");
+    // @ts-ignore
+    tjs.startStreaming(option, function (error, response, body) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+    });
+  }
+
   private updateViews() {
     if (!this.view) {
       return;
