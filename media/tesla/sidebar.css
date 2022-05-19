@@ -70,8 +70,12 @@ a:focus {
   margin: 2px 0;
 }
 
-body.vscode-high-contrast vscode-button:not([appearance="secondary"]) {
+body.vscode-high-contrast vscode-button {
   background: var(--button-border);
+}
+body.vscode-high-contrast vscode-button[appearance="secondary"],
+body.vscode-high-contrast vscode-button[appearance="icon"] {
+  background: inherit;
 }
 
 @keyframes charging {
