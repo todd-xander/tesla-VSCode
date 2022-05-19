@@ -68,6 +68,19 @@ function toggleAutoRenew(ev) {
 
 let maps = {};
 
+function makePushpin(map, v) {
+  let lat = v.drive_state.corrected_latitude;
+  let lng = v.drive_state.corrected_longitude;
+  var pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(lat, lng), {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 48 48" fill="none" style="transform: rotate(${v.drive_state.heading}deg);">
+            <path d="M24.5 4L9 44L24.5 34.9091L40 44L24.5 4Z" fill="#2F88FF" stroke="black" stroke-width="4" stroke-linejoin="round"/>
+          </svg>`,
+    anchor: new Microsoft.Maps.Point(12, 12),
+    enableHoverStyle: true,
+  });
+  map.entities.push(pin);
+}
+
 function buildMap(node, v) {
   clearMaps(v.id_s);
   var map = new Microsoft.Maps.Map(node, {
@@ -83,15 +96,9 @@ function buildMap(node, v) {
     showMapTypeSelector: false,
     showZoomButtons: false,
   });
-  var center = map.getCenter();
-  var pin = new Microsoft.Maps.Pushpin(center, {
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 48 48" fill="none" style="transform: rotate(${v.drive_state.heading}deg);">
-            <path d="M24.5 4L9 44L24.5 34.9091L40 44L24.5 4Z" fill="#2F88FF" stroke="black" stroke-width="4" stroke-linejoin="round"/>
-          </svg>`,
-    anchor: new Microsoft.Maps.Point(12, 12),
-  });
 
-  map.entities.push(pin);
+  makePushpin(map, v);
+
   maps[v.id_s] = map;
 }
 
@@ -109,16 +116,7 @@ function updateMap(map, v) {
       v.drive_state.corrected_longitude
     ),
   });
-  var center = map.getCenter();
-  var pin = new Microsoft.Maps.Pushpin(center, {
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 48 48" fill="none" style="transform: rotate(${v.drive_state.heading}deg);">
-            <rect width="48" height="48" fill="white" fill-opacity="0.01"/>
-            <path d="M24.5 4L9 44L24.5 34.9091L40 44L24.5 4Z" fill="#2F88FF" stroke="black" stroke-width="4" stroke-linejoin="round"/>
-          </svg>`,
-    anchor: new Microsoft.Maps.Point(12, 12),
-  });
-
-  map.entities.push(pin);
+  makePushpin(map, v);
 }
 
 function clearMaps(id) {
