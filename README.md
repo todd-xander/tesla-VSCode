@@ -11,6 +11,12 @@
 - [ ] Allow your passengers to quickly control media
 - [ ] Update your vehicle software from wherever you are
 
+## Snapshots
+
+![snapshot1](/media/snapshot/tesla1.png)
+
+![snapshot2](/media/snapshot/tesla2.png)
+
 ## Security and Privacy
 
 This extension redirect you to Tesla website to login, not access yout Tesla account credentials at all. Your token will be persisted in the extension [SecretStorage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage). Tokens will be revoked if you change your Tesla account password. The source code for this application will at all times be made available to any security researcher for a voluntary security and safety audit.
