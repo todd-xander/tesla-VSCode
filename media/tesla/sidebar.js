@@ -255,38 +255,6 @@ function buildShortcutView(shortcutView, vv) {
       "<vscode-button class='shortcut' title='Fan Mode: On'><span class='material-symbols-rounded'>mode_fan</span></vscode-button>";
   }
 
-  let chargeBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Charging: Disconnected'><span class='material-symbols-rounded'>power</span></vscode-button>";
-  if (
-    vv.charge_state.charge_port_door_open &&
-    vv.charge_state.charge_port_latch === "Engaged"
-  ) {
-    var current = vv.charge_state.charger_actual_current;
-    var voltage = vv.charge_state.charger_voltage;
-    var power = vv.charge_state.charger_power;
-    var battery_level = vv.charge_state.battery_level;
-    var charge_limit = vv.charge_state.charge_limit_soc;
-    var added_rated = vv.charge_state.charge_miles_added_rated;
-    var charge_rate = vv.charge_state.charge_rate;
-    var distance_unit = "mi";
-    var minutes_to_full_charge = vv.charge_state.minutes_to_full_charge;
-    if (vv.gui_settings.gui_distance_units === "km/hr") {
-      added_rated = Math.floor(added_rated * 1.609344 + 0.5);
-      charge_rate = Math.floor(charge_rate * 1.609344 + 0.5);
-      distance_unit = "km";
-    }
-    var title = `${battery_level}%/${charge_limit}%`;
-    if (vv.charge_state.charging_state === "Stopped") {
-      chargeBtn = `<vscode-button class='shortcut' title='Chaging: Stopped ${title}'><span class='material-symbols-rounded'>power</span></vscode-button>`;
-    } else if (vv.charge_state.charging_state === "Complete") {
-      title += ` +${added_rated}${distance_unit}`;
-      chargeBtn = `<vscode-button class='shortcut' title='Charging: Complete ${title}'><span class='material-symbols-rounded'>bolt</span></vscode-button>`;
-    } else {
-      title += ` +${added_rated}${distance_unit} ${charge_rate}${distance_unit}/hr ${current}A/${voltage}V ${power}kwh ${minutes_to_full_charge}minutes remained`;
-      chargeBtn = `<vscode-button class='shortcut charging' title='Charging: ${title}'><span class='material-symbols-rounded'>bolt</span></vscode-button>`;
-    }
-  }
-
   let hornBtn =
     "<vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-rounded'>volume_up</span></vscode-button>";
   let falshBtn =
@@ -493,6 +461,7 @@ function buildControlPanels(controlView, vv) {
     </div>
   </div>`;
 
+  var charging_state = vv.charge_state.charging_state;
   var current = vv.charge_state.charger_actual_current;
   var max_current = vv.charge_state.charge_current_request_max;
   var voltage = vv.charge_state.charger_voltage;
@@ -515,22 +484,14 @@ function buildControlPanels(controlView, vv) {
       ` ${Match.floor(minutes_to_full_charge % 60)}min`;
   }
   var progressInfo = `<div value="${battery_level}" max="100" class="charge-progress">
-                        <div class='meter ${vv.charge_state.charging_state}' style='width: ${battery_level}%' data-value="${battery_level}"></div>
+                        <span class="material-symbols-rounded charger ${charging_state}" title="${charging_state}">charger</span>
+                        <div class='meter ${charging_state}' style='width: ${battery_level}%' data-value="${battery_level}"></div>
                       </div>
                       <input type='range' value="${charge_limit}" min="0" max="100" class="charge-limit-set"></input>
                       <output class='battery-limit-label'>${charge_limit}%</output>`;
-  var stateInfo = "";
-  if (
-    vv.charge_state.charge_port_door_open &&
-    vv.charge_state.charge_port_latch === "Engaged"
-  ) {
-    if (vv.charge_state.charging_state === "Stopped") {
-      stateInfo = `<div></div>`;
-    } else if (vv.charge_state.charging_state === "Complete") {
-      stateInfo = `<div class="charge-info">+${added_rated}${distance_unit}</div>`;
-    } else {
-      stateInfo = `<div class="charge-info">~${time_str} · ${current}/${max_current}A · ${voltage}V · ${power}kW</div>`;
-    }
+  var stateInfo = "<div></div>";
+  if (charging_state === "Charging") {
+    stateInfo = `<div class="charge-info">~${time_str} · ${current}/${max_current}A · ${voltage}V · ${power}kW</div>`;
   }
 
   viewCharge.innerHTML = `<div>

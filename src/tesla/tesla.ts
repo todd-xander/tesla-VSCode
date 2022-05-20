@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as tjs from 'teslajs';
 import * as auth from './auth';
+var websocket = require('ws');
 
 function getTeslaToken(
   extension: vscode.ExtensionContext,
@@ -340,14 +341,39 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private startStreming(v: tjs.Vehicle) {
-    let option = { authToken: this.token || "", vehicleID: v.vehicle_id?.toString() };
-    tjs.setStreamingBaseURI("wss://streaming.vn.cloud.tesla.cn/streaming/");
-    // @ts-ignore
-    tjs.startStreaming(option, function (error, response, body) {
-      if (error) {
-        console.log(error);
-        return;
+    let hdl = this;
+    let streamingURI = "wss://streaming.vn.teslamotors.com/streaming/";
+    let streamingOps = ['est_lat', 'est_lng', 'elevation', 'heading', 'est_heading', 'shift_state', 'speed', 'power', 'est_range', 'range', 'soc', 'odometer'];
+    let codes = v.option_codes as string;
+    if (codes.indexOf('COCN') > 0) {
+      streamingURI = "wss://streaming.vn.cloud.tesla.cn/streaming/";
+    }
+    var ws = new websocket(streamingURI, {
+      perMessageDeflate: false
+    });
+
+    ws.on('message', function incoming(data: any) {
+      var d = JSON.parse(data);
+      if (d.msg_type === 'control:hello') {
+        ws.send(JSON.stringify({
+          msg_type: 'data:subscribe_oauth',
+          token: hdl.token,
+          value: streamingOps.join(','),
+          tag: v.vehicle_id?.toString()
+        }));
+      } else if (d.msg_type === 'data:error') {
+        console.log('Error: ' + d.value);
+      } else {
+        console.log(d);
       }
+    });
+
+    ws.on('close', function close() {
+      console.log('Websocket disconnected');
+    });
+
+    ws.on('error', function error() {
+      console.log('Websocket error');
     });
   }
 

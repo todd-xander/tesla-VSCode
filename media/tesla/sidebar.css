@@ -325,15 +325,27 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .charge-progress {
   height: 35px;
   margin-top: 30px;
-  margin-left: 10px;
-  width: calc(100% - 20px - 24px);
+  margin-left: 36px;
+  margin-bottom: -14px;
+  width: calc(100% - 22px - 26px - 40px);
   border: 2px solid var(--divider-background);
   border-radius: 2px;
 }
-
+.charge-progress .charger {
+  position: absolute;
+  cursor: pointer;
+  margin-left: -36px;
+  font-size: 29px;
+  line-height: 35px;
+  color: var(--progress-background);
+}
+.charge-progress .charger.Disconnected {
+  color: var(--divider-background);
+}
 .charge-progress .meter {
   height: 35px;
   background-color: var(--progress-background);
+  pointer-events: none;
 }
 @keyframes charging-battery {
   from {
@@ -357,12 +369,14 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 }
 .charge-progress .meter:before {
   content: attr(data-value) "%";
-  color: var(--background);
+  color: var(--progress-background);
   font-family: var(--vscode-editor-font-family);
-  width: calc(100% - 22px - 24px);
+  font-weight: bold;
+  width: calc(100% - 22px - 28px - 40px);
   line-height: 35px;
   text-align: center;
   position: absolute;
+  mix-blend-mode: difference;
 }
 .charge-progress:before {
   content: "";
@@ -376,14 +390,14 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   margin-top: 8px;
 }
 .charge-limit-set {
-  width: calc(100% - 18px - 24px);
+  width: calc(100% - 18px - 30px - 40px);
   -webkit-appearance: none;
   appearance: none;
-  height: 1px;
-  margin: 0 0 0 10px;
+  height: 2px;
+  margin: 0px 0 0 38px;
   background: var(--divider-background);
   outline: none;
-  border: 1px solid var(--divider-background);
+  z-index: 999;
 }
 .charge-limit-set:focus {
   outline: none;
@@ -391,20 +405,21 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .charge-limit-set::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 5px;
-  height: 15px;
-  margin-top: -5px;
+  width: 3px;
+  height: 45px;
+  margin-top: -38px;
   background-color: var(--progress-background);
   cursor: pointer;
+  mix-blend-mode: difference;
 }
 .battery-limit-label {
   position: absolute;
-  right: 0;
-  margin-top: 3px;
+  right: 6px;
+  margin-top: -15px;
   opacity: 0.6;
 }
 .charge-info {
-  margin: 3px 10px;
+  margin: 5px 10px 3px 50px;
   font-family: var(--vscode-editor-font-family);
 }
 
