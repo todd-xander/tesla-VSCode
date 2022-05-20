@@ -30,6 +30,8 @@ a:focus {
 .car-img {
   margin: 0 auto;
   display: block;
+  min-height: 160px;
+  object-fit: contain;
   margin-bottom: -20px;
   filter: brightness(1.2);
 }
@@ -272,7 +274,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   margin-bottom: 10px;
 }
 .model.scaled {
-  margin-top: -15px;
+  margin-top: -20px;
   -webkit-mask-image: -webkit-gradient(
     linear,
     left top,
@@ -302,9 +304,12 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 }
 
 .io_temp {
-  text-align: center;
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  white-space: pre;
+  margin-top: 12px;
 }
+
 .temp_control {
   display: flex;
   align-items: center;

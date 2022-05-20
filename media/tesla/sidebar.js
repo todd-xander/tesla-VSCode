@@ -249,10 +249,16 @@ function buildShortcutView(shortcutView, vv) {
   }
 
   let climateBtn =
-    "<vscode-button class='shortcut' appearance='secondary' title='Fan Mode: Off'><span class='material-symbols-rounded'>mode_fan_off</span></vscode-button>";
+    "<vscode-button class='shortcut' appearance='secondary' title='Climate: Off'><span class='material-symbols-rounded'>mode_fan_off</span></vscode-button>";
   if (vv.climate_state.is_climate_on) {
-    climateBtn =
-      "<vscode-button class='shortcut' title='Fan Mode: On'><span class='material-symbols-rounded'>mode_fan</span></vscode-button>";
+    let mode = "";
+    if (vv.climate_state.climate_keeper_mode.toUpperCase() === "ON") {
+      mode = " | Keeper Mode";
+    }
+    if (vv.climate_state.cabin_overheat_protection_actively_cooling) {
+      mode = " | Overheat Protection";
+    }
+    climateBtn = `<vscode-button class='shortcut' title='Climate: On${mode}'><span class='material-symbols-rounded'>mode_fan</span></vscode-button>`;
   }
 
   let hornBtn =
@@ -398,6 +404,7 @@ function buildControlPanels(controlView, vv) {
     </div>`;
 
   let climate = vv.climate_state;
+  let mode = "";
   let in_temp = `${Math.floor(climate.inside_temp + 0.5)}°C`;
   let out_temp = `${Math.floor(climate.outside_temp + 0.5)}°C`;
   let dr_tmp = `${Math.floor(climate.driver_temp_setting + 0.5)}°C`;
@@ -408,6 +415,12 @@ function buildControlPanels(controlView, vv) {
     dr_tmp = `${Math.floor(climate.driver_temp_setting * 1.8 + 32.5)}°F`;
     pg_tmp = `${Math.floor(climate.passenger_temp_setting * 1.8 + 32.5)}°F`;
   }
+  if (climate.climate_keeper_mode.toUpperCase() === "ON") {
+    mode = `<span class="material-symbols-rounded" title="Keeper Mode">pets</span> · `;
+  }
+  if (climate.cabin_overheat_protection_actively_cooling) {
+    mode = `<span class="material-symbols-rounded" title="Overheat Protection">warning</span> · `;
+  }
   let steer_pos = 'style="position: absolute; margin-left: -50px;"';
   let heater_pos = 'style="position: absolute; margin: 6px auto auto 60px;"';
   if (vv.driverPosition == "RightHand") {
@@ -416,6 +429,7 @@ function buildControlPanels(controlView, vv) {
   }
   viewClimate.innerHTML = `
   <div>
+    <div class="io_temp">${mode}Interior ${in_temp} · ${out_temp} Exterior</div>
     <center class="model scaled">
       <div class="above-view-model"
            style="--vehicle-image: url(${makeURL([
@@ -444,7 +458,6 @@ function buildControlPanels(controlView, vv) {
         </vscode-button>
       </div>
     </center>
-    <div class="io_temp">Interior ${in_temp} · ${out_temp} Exterior</div>
     <div class="temp_control">
       <vscode-button appearance="icon" class="left"><span class='material-symbols-rounded'>arrow_left</span></vscode-button>
       <vscode-tag>${dr_tmp}</vscode-tag>
@@ -454,7 +467,7 @@ function buildControlPanels(controlView, vv) {
       <vscode-button appearance="icon" class="right"><span class="material-symbols-rounded">arrow_right</span></vscode-button>
     </div>
     <div class="shortcuts">
-      <vscode-button class="shortcut" appearance="secondary" title="A/C" current-value=""><span class="material-symbols-rounded">mode_fan</span><span class="label">A/C</span></vscode-button>
+      <vscode-button class="shortcut" appearance="secondary" title="Climate" current-value=""><span class="material-symbols-rounded">mode_fan</span><span class="label">Climate</span></vscode-button>
       <vscode-button class="shortcut" appearance="secondary" title="Defrost" current-value=""><span class="material-symbols-rounded">auto_awesome</span><span class="label">Defrost</span></vscode-button>
       <vscode-button class="shortcut" appearance="secondary" title="Vent" current-value=""><span class="material-symbols-rounded">sim_card_download</span><span class="label">Vent</span></vscode-button>
       <vscode-button class="shortcut" appearance="secondary" title="OverHeat Protection" current-value=""><span class="material-symbols-rounded">gpp_maybe</span><span class="label">Overheat</span></vscode-button>
