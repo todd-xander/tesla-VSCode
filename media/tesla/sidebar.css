@@ -322,25 +322,36 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   text-align: center;
 }
 
+.charge-state {
+  margin-top: 20px;
+}
 .charge-progress {
   height: 35px;
-  margin-top: 30px;
   margin-left: 36px;
   margin-bottom: -14px;
-  width: calc(100% - 22px - 26px - 40px);
+  width: calc(100% - 88px);
   border: 2px solid var(--divider-background);
   border-radius: 2px;
 }
-.charge-progress .charger {
+.control-view-charge .charger {
   position: absolute;
   cursor: pointer;
-  margin-left: -36px;
   font-size: 29px;
-  line-height: 35px;
+  line-height: 39px;
   color: var(--progress-background);
 }
-.charge-progress .charger.Disconnected {
+.control-view-charge .charger.Disconnected {
   color: var(--divider-background);
+}
+.control-view-charge .charger:after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 3px;
+  margin-left: -3px;
+  margin-top: 16px;
+  border-top: 2px solid;
+  border-bottom: 2px dotted;
 }
 .charge-progress .meter {
   height: 35px;
@@ -372,7 +383,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   color: var(--progress-background);
   font-family: var(--vscode-editor-font-family);
   font-weight: bold;
-  width: calc(100% - 22px - 28px - 40px);
+  width: calc(100% - 90px);
   line-height: 35px;
   text-align: center;
   position: absolute;
@@ -390,7 +401,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   margin-top: 8px;
 }
 .charge-limit-set {
-  width: calc(100% - 18px - 30px - 40px);
+  width: calc(100% - 88px);
   -webkit-appearance: none;
   appearance: none;
   height: 2px;
@@ -406,8 +417,8 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   -webkit-appearance: none;
   appearance: none;
   width: 3px;
-  height: 45px;
-  margin-top: -38px;
+  height: 49px;
+  margin-top: -37px;
   background-color: var(--progress-background);
   cursor: pointer;
   mix-blend-mode: difference;
@@ -415,12 +426,19 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .battery-limit-label {
   position: absolute;
   right: 6px;
-  margin-top: -15px;
-  opacity: 0.6;
+  line-height: 20px;
+  margin-top: -20px;
+  opacity: 0.4;
+  border-top: 5px solid;
+  border-bottom: 5px solid;
+  border-radius: 8px;
 }
 .charge-info {
-  margin: 5px 10px 3px 50px;
+  margin: 5px 0 0 34px;
+  width: calc(100% - 84px);
+  text-align: center;
   font-family: var(--vscode-editor-font-family);
+  font-size: smaller;
 }
 
 .switcher {

@@ -483,21 +483,24 @@ function buildControlPanels(controlView, vv) {
       `${Match.floor(minutes_to_full_charge / 60)}hr` +
       ` ${Match.floor(minutes_to_full_charge % 60)}min`;
   }
-  var progressInfo = `<div value="${battery_level}" max="100" class="charge-progress">
-                        <span class="material-symbols-rounded charger ${charging_state}" title="${charging_state}">charger</span>
+  var progressInfo = `<span class="material-symbols-rounded charger ${charging_state}" title="${charging_state}">charger</span>
+                      <div class="charge-progress">
                         <div class='meter ${charging_state}' style='width: ${battery_level}%' data-value="${battery_level}"></div>
                       </div>
                       <input type='range' value="${charge_limit}" min="0" max="100" class="charge-limit-set"></input>
                       <output class='battery-limit-label'>${charge_limit}%</output>`;
-  var stateInfo = "<div></div>";
+  var stateInfo = `<div class="charge-info" style="visibility: hidden;"></div>`;
   if (charging_state === "Charging") {
     stateInfo = `<div class="charge-info">~${time_str} · ${current}/${max_current}A · ${voltage}V · ${power}kW</div>`;
   }
 
-  viewCharge.innerHTML = `<div>
-    ${progressInfo}
-    ${stateInfo}
-    </div>`;
+  viewCharge.innerHTML = `
+  <div>
+    <div class='charge-state'>
+      ${progressInfo}
+      ${stateInfo}
+    </div>
+  </div>`;
 
   let sentry = `<span class='material-symbols-rounded'>shield</span><span class='label'>Sentrey Mode</span>`;
   if (vv.vehicle_state.sentry_mode) {
