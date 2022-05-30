@@ -320,7 +320,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     let cs = `${subtype[0]},${color[0]},${wheel[0]},${spoiler[0]},${interior[0]}`;
     const image = `https://static-assets.tesla.com/configurator/compositor?&options=${cs}&view=${view}&model=${model[0]}&size=400&bkba_opt=1`;
 
-    if (vehicle.state === 'asleep') {
+    if (vehicle.state === 'asleep' || vehicle.state === 'offline') {
       return new Promise<any>((resolve, reject) => {
         let vd = { baseUrl, image };
         resolve(Object.assign(vd, vehicle));

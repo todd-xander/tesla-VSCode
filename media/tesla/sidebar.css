@@ -136,6 +136,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   -display: block;
 }
 
+.offline .control-view,
 .asleep .control-view {
   display: none;
 }

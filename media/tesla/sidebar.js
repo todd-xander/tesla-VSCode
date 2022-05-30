@@ -143,7 +143,7 @@ function wakeup(id) {
 
 function buildBasicInfo(infoView, vv) {
   let drive = "";
-  if (vv.state !== "asleep") {
+  if (vv.state !== "offline" && vv.state !== "asleep") {
     let shift = vv.drive_state.shift_state || "P";
     drive = `<div class='drive-info'>`;
     drive += ["P", "R", "N", "D"]
@@ -173,11 +173,11 @@ function buildBasicInfo(infoView, vv) {
   ${drive}
   <img class='car-img' src='${vv.image}'/>`;
 
-  if (vv.state == "asleep") {
+  if (vv.state == "offline" || vv.state == "asleep") {
     clearMaps(vv.id_s);
     infoView.innerHTML = `
     ${basicInfo}
-    <vscode-button title='Wakeup ${vv.display_name}' onclick='wakeup("${vv.id_s}")' class='big>Wakeup</vscode-button>
+    <vscode-button title='Wakeup ${vv.display_name}' onclick='wakeup("${vv.id_s}")' class='big'>Wakeup</vscode-button>
     `;
     return;
   }
@@ -240,7 +240,7 @@ function buildBasicInfo(infoView, vv) {
 }
 
 function buildShortcutView(shortcutView, vv) {
-  if (vv.state == "asleep") {
+  if (vv.state == "offline" || vv.state == "asleep") {
     shortcutView.innerHTML = "";
     return;
   }
@@ -330,7 +330,7 @@ function buildShortcutView(shortcutView, vv) {
 }
 
 function buildControlPanels(controlView, vv) {
-  if (vv.state == "asleep") {
+  if (vv.state == "offline" || vv.state == "asleep") {
     clearMaps(vv.id_s);
     return;
   }
@@ -657,12 +657,20 @@ function buildContent(view, data) {
     return;
   }
   var ts;
-  if (data.state === "asleep") {
+  if (data.state === "offline") {
+    if (!view.classList.contains("offline")) {
+      view.classList.add("offline");
+    }
+    ts = Date.now();
+  } else if (data.state === "asleep") {
     if (!view.classList.contains("asleep")) {
       view.classList.add("asleep");
     }
     ts = Date.now();
   } else {
+    if (view.classList.contains("offline")) {
+      view.classList.remove("offline");
+    }
     if (view.classList.contains("asleep")) {
       view.classList.remove("asleep");
     }
