@@ -1,3 +1,5 @@
+const vscode = acquireVsCodeApi();
+
 function makeURL(path) {
   return `https://file%2B.vscode-resource.vscode-cdn.net${path.join("/")}`;
 }
@@ -131,6 +133,14 @@ function clearMaps(id) {
   }
 }
 
+function unfreeze() {
+  vscode.postMessage({ command: "unfreeze" });
+}
+
+function wakeup(id) {
+  vscode.postMessage({ command: "wakeup", vid: id });
+}
+
 function buildBasicInfo(infoView, vv) {
   let drive = "";
   if (vv.state !== "asleep") {
@@ -167,7 +177,7 @@ function buildBasicInfo(infoView, vv) {
     clearMaps(vv.id_s);
     infoView.innerHTML = `
     ${basicInfo}
-    <vscode-button title='Wakeup ${vv.display_name}' data-command='wakeup' class='big' data-vid='${vv.id_s}'>Wakeup</vscode-button>
+    <vscode-button title='Wakeup ${vv.display_name}' onclick='wakeup("${vv.id_s}")' class='big>Wakeup</vscode-button>
     `;
     return;
   }
@@ -377,13 +387,13 @@ function buildControlPanels(controlView, vv) {
         "media",
         "Tesla-Model-3.svg",
       ])})">
-        <vscode-button class="action-btn" appearance="icon" title="Open Frunk"><span class="material-symbols-rounded">google_travel_outline</span></vscode-button>
-        <vscode-button class="action-btn" appearance="icon" title="Open Sunroof" 
+        <vscode-button class="action-btn frunk" appearance="icon" title="Open Frunk"><span class="material-symbols-rounded">google_travel_outline</span></vscode-button>
+        <vscode-button class="action-btn sunroof" appearance="icon" title="Open Sunroof" 
             style="${sunroof ? "" : "visibility: hidden;"}"
         >
           <span class="material-symbols-rounded">sensor_window</span>
         </vscode-button>
-        <vscode-button class="action-btn last" appearance="icon" title="Open Frunk"><span class="material-symbols-rounded">luggage</span></vscode-button>
+        <vscode-button class="action-btn trunk" appearance="icon" title="Open Frunk"><span class="material-symbols-rounded">luggage</span></vscode-button>
         <vscode-button class="action-btn charger" appearance="icon"><span class="material-symbols-rounded">settings_input_svideo</span></vscode-button>
         <div class="tpms_pressure"
              style="${p_fl || p_fr || p_rl || p_rr || "display:none;"}"
@@ -421,41 +431,26 @@ function buildControlPanels(controlView, vv) {
   if (climate.cabin_overheat_protection_actively_cooling) {
     mode = `<span class="material-symbols-rounded" title="Overheat Protection">warning</span> · `;
   }
-  let steer_pos = 'style="position: absolute; margin-left: -50px;"';
-  let heater_pos = 'style="position: absolute; margin: 6px auto auto 60px;"';
-  if (vv.driverPosition == "RightHand") {
-    steer_pos = 'style="position: absolute; margin-left: 10px;"';
-    heater_pos = 'style="position: absolute; margin: 6px auto auto 120px;"';
-  }
+
   viewClimate.innerHTML = `
   <div>
     <div class="io_temp">${mode}Interior ${in_temp} · ${out_temp} Exterior</div>
-    <center class="model scaled">
+    <center class="model scaled ${vv.driverPosition}">
       <div class="above-view-model"
            style="--vehicle-image: url(${makeURL([
              vv.baseUrl,
              "media",
              "Tesla-Model-3.svg",
            ])})">
-        <span class="material-symbols-rounded steering" ${steer_pos}>donut_large</span>
-        <vscode-button class="action-btn" appearance="icon" ${heater_pos}>
-          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
+        <span class="material-symbols-rounded steering">donut_large</span>
+        <vscode-button class="action-btn steering-heater" appearance="icon">
+          <span class="material-symbols-rounded">airware</span>
         </vscode-button>
-        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 60px auto auto 60px;">
-          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
-        </vscode-button>
-        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 60px auto auto 120px;">
-          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
-        </vscode-button>
-        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 180px auto auto 60px;">
-          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
-        </vscode-button>
-        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 180px auto auto 90px;">
-          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
-        </vscode-button>
-        <vscode-button class="action-btn" appearance="icon" style="position: absolute; margin: 180px auto auto 120px;">
-          <span class="material-symbols-rounded" style="transform:rotate(90deg);">airware</span>
-        </vscode-button>
+        <vscode-button class="action-btn heater fl" appearance="icon"><span class="material-symbols-rounded">airware</span></vscode-button>
+        <vscode-button class="action-btn heater fr" appearance="icon"><span class="material-symbols-rounded">airware</span></vscode-button>
+        <vscode-button class="action-btn heater rl" appearance="icon"><span class="material-symbols-rounded">airware</span></vscode-button>
+        <vscode-button class="action-btn heater rm" appearance="icon"><span class="material-symbols-rounded">airware</span></vscode-button>
+        <vscode-button class="action-btn heater rr" appearance="icon"><span class="material-symbols-rounded">airware</span></vscode-button>
       </div>
     </center>
     <div class="temp_control">
@@ -815,7 +810,7 @@ window.addEventListener("message", (event) => {
           <img src='${makeURL([message.logo])}'
                style='width: 100px; margin: 0 auto 50px auto; padding-top: 100px; display: flex; filter: contrast(0.1);'>
         </div>
-        <vscode-button title='Unfreeze' data-command='unfreeze' class='big'>Unfreeze</vscode-button>
+        <vscode-button title='Unfreeze' onclick='unfreeze()' class='big'>Unfreeze</vscode-button>
       </div>`;
       break;
     }

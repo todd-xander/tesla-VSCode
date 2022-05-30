@@ -196,29 +196,25 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .control-view-content > div {
   width: 100%;
 }
-
-.tpms_pressure .fl {
+.tpms_pressure > div {
   position: absolute;
-  margin-top: -300px;
-  margin-left: -30px;
+  width: 60px;
+  text-align: center;
+}
+.tpms_pressure .fl {
+  margin: 70px auto auto calc(182px / 2 - 30px - 100px);
 }
 
 .tpms_pressure .fr {
-  position: absolute;
-  margin-top: -300px;
-  margin-left: 178px;
+  margin: 70px auto auto calc(182px / 2 - 30px + 100px);
 }
 
 .tpms_pressure .rl {
-  position: absolute;
-  margin-top: -100px;
-  margin-left: -30px;
+  margin: 260px auto auto calc(182px / 2 - 30px - 100px);
 }
 
 .tpms_pressure .rr {
-  position: absolute;
-  margin-top: -100px;
-  margin-left: 178px;
+  margin: 260px auto auto calc(182px / 2 - 30px + 100px);
 }
 
 .model .action-list {
@@ -233,16 +229,23 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   margin-right: 0%;
 }
 .model .action-btn {
+  position: absolute;
   display: block;
-  width: fit-content;
-  margin: 8px 0 130px 0;
 }
-.model .action-btn.last {
-  margin: 10px;
+
+.model .action-btn.frunk {
+  margin: 8px auto auto calc(186px / 2 - 15px);
+}
+
+.model .action-btn.sunroof {
+  margin: 175px auto auto calc(186px / 2 - 15px);
+}
+
+.model .action-btn.trunk {
+  margin: 328px auto auto calc(186px / 2 - 15px);
 }
 .model .action-btn.charger {
-  position: absolute;
-  margin: -80px 0 0 -5px;
+  margin: 280px auto auto calc(186px / 2 - 75px);
 }
 .model .action-btn .material-symbols-rounded {
   font-size: 1.6em;
@@ -270,11 +273,10 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .model .above-view-model {
   width: 186px;
   height: 360px;
-  padding: 20px 0;
+  padding: 24px 0;
   margin-bottom: 10px;
 }
 .model.scaled {
-  margin-top: -20px;
   -webkit-mask-image: -webkit-gradient(
     linear,
     left top,
@@ -287,34 +289,68 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 }
 .model.scaled .above-view-model {
   overflow: hidden;
-  width: 210px;
-  height: 290px;
-  margin-top: 30px;
+  width: 228px;
+  height: 300px;
+  margin: 0;
 }
 
 .model.scaled .above-view-model:before {
-  width: 210px;
-  margin-top: 10px;
-  transform: scale(1.2) translateY(-65px);
+  width: 228px;
+  margin-top: 36px;
+  transform: scale(1.26) translateY(-65px);
 }
 .steering {
+  position: absolute;
+  display: block;
   font-size: 40px;
   transform: rotate(90deg) rotateY(45deg);
   opacity: 0.4;
+  margin: 20px auto auto calc(228px / 2 - 20px - 35px);
+}
+.model .action-btn.steering-heater {
+  position: absolute;
+  margin: 25px auto auto calc(228px / 2 - 15px - 35px);
+}
+.RightHand .steering {
+  margin: 20px auto auto calc(228px / 2 - 20px + 35px);
+}
+.RightHand .steering-heater {
+  margin: 25px auto auto calc(228px / 2 - 15px + 35px);
+}
+.heater {
+  position: absolute;
+}
+.heater.fl {
+  margin: 85px auto auto calc(228px / 2 - 15px - 35px);
+}
+.heater.fr {
+  margin: 85px auto auto calc(228px / 2 - 15px + 35px);
+}
+.heater.rl {
+  margin: 220px auto auto calc(228px / 2 - 15px - 35px);
+}
+.heater.rm {
+  margin: 220px auto auto calc(228px / 2 - 15px);
+}
+.heater.rr {
+  margin: 220px auto auto calc(228px / 2 - 15px + 35px);
+}
+.heater .material-symbols-rounded {
+  transform: rotate(90deg);
 }
 
 .io_temp {
   display: flex;
   justify-content: center;
   white-space: pre;
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .temp_control {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 10px 0 15px 0;
+  margin: 0px 0 15px 0;
 }
 .temp_control vscode-button.left {
   margin-left: 12px;

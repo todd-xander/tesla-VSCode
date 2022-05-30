@@ -552,14 +552,6 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
         'toolkit.js',
       ),
     );
-    const eventHandler = this.view.asWebviewUri(
-      vscode.Uri.joinPath(
-        this.extension.extensionUri,
-        'media',
-        'common',
-        'eventHandler.js',
-      ),
-    );
 
     this.view.html = `<!DOCTYPE html>
                       <html lang="en">
@@ -568,7 +560,6 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
                       <link href="${meterialSymbolsUri}" rel="stylesheet" />
                       <link href="${cssUri}" rel="stylesheet" />
                       <script type="module" src="${toolkitUri}"></script>
-                      <script src="${eventHandler}"></script>
                       <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=An_6ByRH6GN7uClufsDPzCH1A4rWipnVD2xgUYbYQPQo30fnm5zm3a1IW7mehszk' async defer></script>
                       <script src="${jsUri}"></script>
                       </head>
