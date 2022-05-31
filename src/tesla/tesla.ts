@@ -66,27 +66,15 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     if (!this.view) {
       return;
     }
-    const logo = this.view.asWebviewUri(
-      vscode.Uri.joinPath(
-        this.extension.extensionUri,
-        'media',
-        'tesla-t.svg',
-      ),
-    );
-    this.view.postMessage({ command: 'login', logo: logo.path });
+    const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
+    this.view.postMessage({ command: 'login', baseUrl });
   }
   private frozenPage() {
     if (!this.view) {
       return;
     }
-    const logo = this.view.asWebviewUri(
-      vscode.Uri.joinPath(
-        this.extension.extensionUri,
-        'media',
-        'tesla-t.svg',
-      ),
-    );
-    this.view.postMessage({ command: 'froze', logo: logo.path });
+    const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
+    this.view.postMessage({ command: 'froze', baseUrl });
   }
 
   private optionCodesToCarType(codes: String[]): String[] {

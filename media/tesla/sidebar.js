@@ -1,7 +1,8 @@
 const vscode = acquireVsCodeApi();
 
-function makeURL(path) {
-  return `https://file%2B.vscode-resource.vscode-cdn.net${path.join("/")}`;
+function makeURL() {
+  var args = Array.prototype.slice.call(arguments);
+  return `https://file%2B.vscode-resource.vscode-cdn.net${args.join("/")}`;
 }
 
 let poll = {};
@@ -380,13 +381,14 @@ function buildControlPanels(controlView, vv) {
   var p_fr = vv.vehicle_state.tpms_pressure_fr;
   var p_rl = vv.vehicle_state.tpms_pressure_rl;
   var p_rr = vv.vehicle_state.tpms_pressure_rr;
-  viewAction.innerHTML = `<div>
+  viewAction.innerHTML = `
+  <div>
     <center class="model">
-      <div class="above-view-model" style="--vehicle-image: url(${makeURL([
+      <div class="above-view-model" style="--vehicle-image: url(${makeURL(
         vv.baseUrl,
         "media",
-        "Tesla-Model-3.svg",
-      ])})">
+        "Tesla-Model-3.svg"
+      )})">
         <vscode-button class="action-btn frunk" appearance="icon" title="Open Frunk"><span class="material-symbols-rounded">google_travel_outline</span></vscode-button>
         <vscode-button class="action-btn sunroof" appearance="icon" title="Open Sunroof" 
             style="${sunroof ? "" : "visibility: hidden;"}"
@@ -404,14 +406,14 @@ function buildControlPanels(controlView, vv) {
           <div class='rr'>${p_rr ? p_rr.toFixed(1) : "--"} bar</div>
         </div>
       </div>
-      <div class="shortcuts">
-        <vscode-button class='shortcut' appearance='secondary' title='Unlock'><span class='material-symbols-rounded'>lock</span><span class="label">Unlock</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Start'><span class="material-symbols-rounded">power_settings_new</span><span class="label">Start</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-rounded'>volume_up</span><span class="label">Honk</span></vscode-button>
-        <vscode-button class='shortcut' appearance='secondary' title='Flash'><span class='material-symbols-rounded'>flare</span><span class="label">Flash</span></vscode-button>
-      </div>
     </center>
-    </div>`;
+    <div class="shortcuts">
+      <vscode-button class='shortcut' appearance='secondary' title='Unlock'><span class='material-symbols-rounded'>lock</span><span class="label">Unlock</span></vscode-button>
+      <vscode-button class='shortcut' appearance='secondary' title='Start'><span class="material-symbols-rounded">power_settings_new</span><span class="label">Start</span></vscode-button>
+      <vscode-button class='shortcut' appearance='secondary' title='Honk'><span class='material-symbols-rounded'>volume_up</span><span class="label">Honk</span></vscode-button>
+      <vscode-button class='shortcut' appearance='secondary' title='Flash'><span class='material-symbols-rounded'>flare</span><span class="label">Flash</span></vscode-button>
+    </div>
+  </div>`;
 
   let climate = vv.climate_state;
   let mode = "";
@@ -434,14 +436,14 @@ function buildControlPanels(controlView, vv) {
 
   viewClimate.innerHTML = `
   <div>
-    <div class="io_temp">${mode}Interior ${in_temp} · ${out_temp} Exterior</div>
     <center class="model scaled ${vv.driverPosition}">
+      <div class="io_temp">${mode}Interior ${in_temp} · ${out_temp} Exterior</div>
       <div class="above-view-model"
-           style="--vehicle-image: url(${makeURL([
+           style="--vehicle-image: url(${makeURL(
              vv.baseUrl,
              "media",
-             "Tesla-Model-3.svg",
-           ])})">
+             "Tesla-Model-3.svg"
+           )})">
         <span class="material-symbols-rounded steering">donut_large</span>
         <vscode-button class="action-btn steering-heater" appearance="icon">
           <span class="material-symbols-rounded">airware</span>
@@ -453,15 +455,15 @@ function buildControlPanels(controlView, vv) {
         <vscode-button class="action-btn heater rr" appearance="icon"><span class="material-symbols-rounded">airware</span></vscode-button>
       </div>
     </center>
-    <div class="temp_control">
-      <vscode-button appearance="icon" class="left"><span class='material-symbols-rounded'>arrow_left</span></vscode-button>
-      <vscode-tag>${dr_tmp}</vscode-tag>
-      <vscode-button appearance="icon" class="right"><span class="material-symbols-rounded">arrow_right</span></vscode-button>
-      <vscode-button appearance="icon" class="left"><span class='material-symbols-rounded'>arrow_left</span></vscode-button>
-      <vscode-tag>${pg_tmp}</vscode-tag>
-      <vscode-button appearance="icon" class="right"><span class="material-symbols-rounded">arrow_right</span></vscode-button>
-    </div>
     <div class="shortcuts">
+      <div class="temp_control">
+        <vscode-button appearance="icon" class="left"><span class='material-symbols-rounded'>arrow_left</span></vscode-button>
+        <vscode-tag>${dr_tmp}</vscode-tag>
+        <vscode-button appearance="icon" class="right"><span class="material-symbols-rounded">arrow_right</span></vscode-button>
+        <vscode-button appearance="icon" class="left"><span class='material-symbols-rounded'>arrow_left</span></vscode-button>
+        <vscode-tag>${pg_tmp}</vscode-tag>
+        <vscode-button appearance="icon" class="right"><span class="material-symbols-rounded">arrow_right</span></vscode-button>
+      </div>
       <vscode-button class="shortcut" appearance="secondary" title="Climate" current-value=""><span class="material-symbols-rounded">mode_fan</span><span class="label">Climate</span></vscode-button>
       <vscode-button class="shortcut" appearance="secondary" title="Defrost" current-value=""><span class="material-symbols-rounded">auto_awesome</span><span class="label">Defrost</span></vscode-button>
       <vscode-button class="shortcut" appearance="secondary" title="Vent" current-value=""><span class="material-symbols-rounded">sim_card_download</span><span class="label">Vent</span></vscode-button>
@@ -782,12 +784,16 @@ window.addEventListener("message", (event) => {
           }
         </style>
         <div style='margin: 0 auto; padding-top: 50px; max-width: 260px;'>
-          <img id='logo' src='${makeURL([message.logo])}'>
+          <img id='logo' src='${makeURL(
+            message.baseUrl,
+            "media",
+            "tesla-t.svg"
+          )}'>
           <vscode-text-field type="email" id="email" name="email" placeholder="Tesla Account Email" onchange='login(event)'>1. Input account email</vscode-text-field>
           <div id='tip' class='disabled'>
           2. Login from 
           <a id='login-url'>
-            <img src='${makeURL([message.logo])}'>
+            <img src='${makeURL(message.baseUrl, "media", "tesla-t.svg")}'>
           </a>
           </div>
           <vscode-text-field type="url" id="url" name="url" placeholder="Tesla Verification URL" oninput='urlcheck(event)' disabled>3. Paste returned URL</vscode-text-field>
@@ -815,7 +821,7 @@ window.addEventListener("message", (event) => {
       document.body.innerHTML = `
       <div style='height:100vh; padding: 0 8px'>
         <div>
-          <img src='${makeURL([message.logo])}'
+          <img src='${makeURL(message.baseUrl, "media", "tesla-t.svg")}'
                style='width: 100px; margin: 0 auto 50px auto; padding-top: 100px; display: flex; filter: contrast(0.1);'>
         </div>
         <vscode-button title='Unfreeze' onclick='unfreeze()' class='big'>Unfreeze</vscode-button>

@@ -32,7 +32,6 @@ a:focus {
   display: block;
   min-height: 160px;
   object-fit: contain;
-  margin-bottom: -20px;
   filter: brightness(1.2);
 }
 .drive-info {
@@ -51,22 +50,23 @@ a:focus {
   opacity: 1;
 }
 .state-info {
+  position: relative;
   font-weight: bold;
   font-size: 1em;
   text-align: center;
-  padding-bottom: 10px;
+  margin: -25px 0 15px 0;
 }
 
 .state-info > span {
-  width: calc(33% - 2px);
+  width: calc((100% - 8px) / 3);
   display: inline-grid;
   cursor: pointer;
 }
 .shortcuts {
-  margin: 0 2px;
+  margin: 0;
 }
 .shortcuts .shortcut {
-  width: calc(25% - 3px);
+  width: calc((100% - 11px) / 4);
   min-width: 48px;
   max-width: 100px;
   margin: 2px 0;
@@ -158,10 +158,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .debug {
   display: none;
 }
-.map {
-  height: calc(100% - 40px);
-  margin-bottom: 5px;
-}
+
 .vscode-dark .map {
   filter: invert(1) hue-rotate(180deg);
 }
@@ -196,6 +193,17 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 }
 .control-view-content > div {
   width: 100%;
+}
+.control-view-content.control-view-location > div,
+.control-view-content.control-view-action > div,
+.control-view-content.control-view-climate > div {
+  display: grid;
+  grid-template-rows: auto max-content;
+}
+center.model {
+  display: grid;
+  justify-content: center;
+  margin: auto 0;
 }
 .tpms_pressure > div {
   position: absolute;
@@ -277,7 +285,12 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   padding: 24px 0;
   margin-bottom: 10px;
 }
-.model.scaled {
+
+.model.scaled .above-view-model {
+  overflow: hidden;
+  width: 228px;
+  height: 300px;
+  margin: 0;
   -webkit-mask-image: -webkit-gradient(
     linear,
     left top,
@@ -287,12 +300,6 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
     color-stop(80%, rgba(0, 0, 0, 1)),
     color-stop(100%, rgba(0, 0, 0, 0))
   );
-}
-.model.scaled .above-view-model {
-  overflow: hidden;
-  width: 228px;
-  height: 300px;
-  margin: 0;
 }
 
 .model.scaled .above-view-model:before {
@@ -308,7 +315,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   opacity: 0.4;
   margin: 20px auto auto calc(228px / 2 - 20px - 35px);
 }
-.model .action-btn.steering-heater {
+.model .steering-heater {
   position: absolute;
   margin: 25px auto auto calc(228px / 2 - 15px - 35px);
 }
@@ -336,6 +343,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .heater.rr {
   margin: 220px auto auto calc(228px / 2 - 15px + 35px);
 }
+.steering-heater .material-symbols-rounded,
 .heater .material-symbols-rounded {
   transform: rotate(90deg);
 }
@@ -344,7 +352,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   display: flex;
   justify-content: center;
   white-space: pre;
-  margin-top: 14px;
+  margin-bottom: 10px;
 }
 
 .temp_control {
