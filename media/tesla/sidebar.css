@@ -200,30 +200,30 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   display: grid;
   grid-template-rows: auto max-content;
 }
-center.model {
-  display: grid;
-  justify-content: center;
-  margin: auto 0;
-}
+
 .tpms_pressure > div {
   position: absolute;
   width: 60px;
   text-align: center;
 }
 .tpms_pressure .fl {
-  margin: 70px auto auto calc(182px / 2 - 30px - 100px);
+  top: 20%;
+  left: calc(50% - 140px);
 }
 
 .tpms_pressure .fr {
-  margin: 70px auto auto calc(182px / 2 - 30px + 100px);
+  top: 20%;
+  left: calc(50% + 80px);
 }
 
 .tpms_pressure .rl {
-  margin: 260px auto auto calc(182px / 2 - 30px - 100px);
+  top: 65%;
+  left: calc(50% - 140px);
 }
 
 .tpms_pressure .rr {
-  margin: 260px auto auto calc(182px / 2 - 30px + 100px);
+  top: 65%;
+  left: calc(50% + 80px);
 }
 
 .model .action-list {
@@ -238,23 +238,28 @@ center.model {
   margin-right: 0%;
 }
 .model .action-btn {
-  position: absolute;
   display: block;
+  position: absolute;
 }
 
 .model .action-btn.frunk {
-  margin: 8px auto auto calc(186px / 2 - 15px);
+  top: calc(6% - 0px);
+  left: calc(50% - 15px);
 }
 
 .model .action-btn.sunroof {
-  margin: 175px auto auto calc(186px / 2 - 15px);
+  top: calc(50% - 30px);
+  left: calc(50% - 15px);
 }
 
 .model .action-btn.trunk {
-  margin: 328px auto auto calc(186px / 2 - 15px);
+  top: calc(90% - 44px);
+  left: calc(50% - 15px);
 }
 .model .action-btn.charger {
-  margin: 280px auto auto calc(186px / 2 - 75px);
+  top: calc(76% - 30px);
+  left: calc(50% - 15px);
+  margin-left: -70px;
 }
 .model .action-btn .material-symbols-rounded {
   font-size: 1.6em;
@@ -263,15 +268,18 @@ center.model {
   width: fit-content;
   height: fit-content;
 }
-
+.model .above-view-model {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+}
 .model .above-view-model:before {
   content: "";
-  position: absolute;
   display: block;
-  width: 186px;
-  height: 360px;
+  height: 100%;
+  min-height: 319px;
   background: var(--vehicle-image);
-  margin: 0 auto;
+  transform: scale(0.9);
   filter: contrast(0.01);
   background-repeat: no-repeat;
   background-size: contain;
@@ -279,18 +287,18 @@ center.model {
   z-index: -1;
 }
 
-.model .above-view-model {
-  width: 186px;
-  height: 360px;
-  padding: 24px 0;
-  margin-bottom: 10px;
-}
-
 .model.scaled .above-view-model {
   overflow: hidden;
   width: 228px;
-  height: 300px;
-  margin: 0;
+  height: calc(100% - 32px);
+  mask-image: linear-gradient(
+    left top,
+    left bottom,
+    color-stop(0%, rgba(0, 0, 0, 0)),
+    color-stop(10%, rgba(0, 0, 0, 1)),
+    color-stop(80%, rgba(0, 0, 0, 1)),
+    color-stop(100%, rgba(0, 0, 0, 0))
+  );
   -webkit-mask-image: -webkit-gradient(
     linear,
     left top,
@@ -303,56 +311,63 @@ center.model {
 }
 
 .model.scaled .above-view-model:before {
-  width: 228px;
-  margin-top: 36px;
-  transform: scale(1.26) translateY(-65px);
+  transform: scale(1.3) translateY(-8%);
 }
 .steering {
-  position: absolute;
   display: block;
+  position: absolute;
   font-size: 40px;
   transform: rotate(90deg) rotateY(45deg);
   opacity: 0.4;
-  margin: 20px auto auto calc(228px / 2 - 20px - 35px);
+  top: calc(15% + 15px);
+  left: calc(50% - 55px);
 }
 .model .steering-heater {
-  position: absolute;
-  margin: 25px auto auto calc(228px / 2 - 15px - 35px);
+  top: calc(15% + 20px);
+  left: calc(50% - 50px);
+  border-radius: 50%;
+  transform: scale(1.1) rotateX(45deg);
 }
 .RightHand .steering {
-  margin: 20px auto auto calc(228px / 2 - 20px + 35px);
+  left: calc(50% + 15px);
 }
 .RightHand .steering-heater {
-  margin: 25px auto auto calc(228px / 2 - 15px + 35px);
+  left: calc(50% + 20px);
 }
 .heater {
   position: absolute;
+  box-shadow: 0 0 4px #ddd8;
 }
 .heater.fl {
-  margin: 85px auto auto calc(228px / 2 - 15px - 35px);
+  top: 32%;
+  left: calc(50% - 50px);
 }
 .heater.fr {
-  margin: 85px auto auto calc(228px / 2 - 15px + 35px);
+  top: 32%;
+  left: calc(50% + 20px);
 }
 .heater.rl {
-  margin: 220px auto auto calc(228px / 2 - 15px - 35px);
+  top: 55%;
+  left: calc(50% - 50px);
 }
 .heater.rm {
-  margin: 220px auto auto calc(228px / 2 - 15px);
+  top: 55%;
+  left: calc(50% - 15px);
 }
 .heater.rr {
-  margin: 220px auto auto calc(228px / 2 - 15px + 35px);
+  top: 55%;
+  left: calc(50% + 20px);
 }
-.steering-heater .material-symbols-rounded,
+
 .heater .material-symbols-rounded {
   transform: rotate(90deg);
 }
 
 .io_temp {
   display: flex;
+  padding: 15px 0 0px 0;
   justify-content: center;
   white-space: pre;
-  margin-bottom: 10px;
 }
 
 .temp_control {

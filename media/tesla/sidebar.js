@@ -444,8 +444,7 @@ function buildControlPanels(controlView, vv) {
              "media",
              "Tesla-Model-3.svg"
            )})">
-        <span class="material-symbols-rounded steering">donut_large</span>
-        <vscode-button class="action-btn steering-heater" appearance="icon">
+        <vscode-button class="action-btn heater steering-heater" appearance="icon">
           <span class="material-symbols-rounded">airware</span>
         </vscode-button>
         <vscode-button class="action-btn heater fl" appearance="icon"><span class="material-symbols-rounded">airware</span></vscode-button>
