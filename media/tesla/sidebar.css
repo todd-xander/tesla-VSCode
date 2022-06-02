@@ -248,18 +248,17 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 }
 
 .model .action-btn.sunroof {
-  top: calc(50% - 30px);
+  top: calc(50% - 15px);
   left: calc(50% - 15px);
 }
 
 .model .action-btn.trunk {
-  top: calc(90% - 44px);
+  top: calc(90% - 15px);
   left: calc(50% - 15px);
 }
 .model .action-btn.charger {
-  top: calc(76% - 30px);
-  left: calc(50% - 15px);
-  margin-left: -70px;
+  top: calc(80% - 15px);
+  left: 8%;
 }
 .model .action-btn .material-symbols-rounded {
   font-size: 1.6em;
@@ -269,9 +268,12 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   height: fit-content;
 }
 .model .above-view-model {
-  width: 100%;
-  height: 100%;
-  min-height: 320px;
+  aspect-ratio: 9/20;
+  position: relative;
+  height: 43vh;
+  margin: 0 auto;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .model .above-view-model:before {
   content: "";
@@ -286,11 +288,14 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   background-position: center center;
   z-index: -1;
 }
-
+.model.scaled {
+  display: grid;
+  grid-template-rows: max-content auto;
+}
 .model.scaled .above-view-model {
   overflow: hidden;
-  width: 228px;
-  height: calc(100% - 32px);
+  aspect-ratio: 14/20;
+  height: calc(43vh - 82px);
   mask-image: linear-gradient(
     left top,
     left bottom,
@@ -323,8 +328,8 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   left: calc(50% - 55px);
 }
 .model .steering-heater {
-  top: calc(15% + 20px);
-  left: calc(50% - 50px);
+  top: 15%;
+  left: calc(35% - 15px);
   border-radius: 50%;
   transform: scale(1.1) rotateX(45deg);
 }
@@ -332,31 +337,31 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   left: calc(50% + 15px);
 }
 .RightHand .steering-heater {
-  left: calc(50% + 20px);
+  left: calc(65% - 15px);
 }
 .heater {
   position: absolute;
   box-shadow: 0 0 4px #ddd8;
 }
 .heater.fl {
-  top: 32%;
-  left: calc(50% - 50px);
+  top: 30%;
+  left: calc(35% - 15px);
 }
 .heater.fr {
-  top: 32%;
-  left: calc(50% + 20px);
+  top: 30%;
+  left: calc(65% - 15px);
 }
 .heater.rl {
-  top: 55%;
-  left: calc(50% - 50px);
+  top: 60%;
+  left: calc(35% - 15px);
 }
 .heater.rm {
-  top: 55%;
+  top: 60%;
   left: calc(50% - 15px);
 }
 .heater.rr {
-  top: 55%;
-  left: calc(50% + 20px);
+  top: 60%;
+  left: calc(65% - 15px);
 }
 
 .heater .material-symbols-rounded {
@@ -364,10 +369,9 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 }
 
 .io_temp {
-  display: flex;
-  padding: 15px 0 0px 0;
   justify-content: center;
   white-space: pre;
+  padding: 20px 0 10px 0;
 }
 
 .temp_control {

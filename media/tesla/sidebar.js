@@ -87,8 +87,6 @@ function makePushpin(map, v) {
 function buildMap(node, v) {
   clearMaps(v.id_s);
   var map = new Microsoft.Maps.Map(node, {
-    credentials:
-      "An_6ByRH6GN7uClufsDPzCH1A4rWipnVD2xgUYbYQPQo30fnm5zm3a1IW7mehszk",
     center: new Microsoft.Maps.Location(
       v.drive_state.corrected_latitude,
       v.drive_state.corrected_longitude
@@ -107,12 +105,6 @@ function buildMap(node, v) {
 
 function updateMap(map, v) {
   map.entities.clear();
-  map.setOptions({
-    center: new Microsoft.Maps.Location(
-      v.drive_state.corrected_latitude,
-      v.drive_state.corrected_longitude
-    ),
-  });
   map.setView({
     center: new Microsoft.Maps.Location(
       v.drive_state.corrected_latitude,
