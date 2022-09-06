@@ -22,6 +22,11 @@ a:focus {
   right: 0;
 }
 
+.container vscode-divider {
+  border-top-color: var(--progress-background);
+  opacity: 0.8;
+}
+
 .banner {
   display: inline-flex;
   margin: 10px 0;
@@ -399,7 +404,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   margin-left: 36px;
   margin-bottom: -14px;
   width: calc(100% - 88px);
-  border: 2px solid var(--divider-background);
+  border: 2px solid var(--progress-background);
   border-radius: 2px;
 }
 .control-view-charge .charger {
@@ -410,7 +415,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   color: var(--progress-background);
 }
 .control-view-charge .charger.Disconnected {
-  color: var(--divider-background);
+  color: var(--progress-background);
 }
 .control-view-charge .charger:after {
   content: "";
@@ -425,6 +430,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .charge-progress .meter {
   height: 35px;
   background-color: var(--progress-background);
+  opacity: 0.6;
   pointer-events: none;
 }
 @keyframes charging-battery {
@@ -449,20 +455,18 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 }
 .charge-progress .meter:before {
   content: attr(data-value) "%";
-  color: var(--progress-background);
+  color: var(--background);
   font-family: var(--vscode-editor-font-family);
-  font-weight: bold;
   width: calc(100% - 90px);
   line-height: 35px;
   text-align: center;
   position: absolute;
-  mix-blend-mode: difference;
 }
 .charge-progress:before {
   content: "";
   height: 15px;
   width: 8px;
-  border: 2px solid var(--divider-background);
+  border: 2px solid var(--progress-background);
   border-left: none;
   border-radius: 0 2px 2px 0;
   float: right;
@@ -475,7 +479,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   appearance: none;
   height: 2px;
   margin: 0px 0 0 38px;
-  background: var(--divider-background);
+  background: var(--progress-background);
   outline: none;
   z-index: 999;
 }
@@ -489,8 +493,8 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   height: 49px;
   margin-top: -37px;
   background-color: var(--progress-background);
+  opacity: 0.8;
   cursor: pointer;
-  mix-blend-mode: difference;
 }
 .battery-limit-label {
   position: absolute;
