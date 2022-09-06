@@ -2,13 +2,16 @@ body {
   padding: 0 5px;
   user-select: none;
 }
+
 a {
   cursor: pointer;
   text-decoration: none;
 }
+
 a:hover {
   cursor: pointer;
 }
+
 a:focus {
   outline: none;
 }
@@ -23,8 +26,7 @@ a:focus {
 }
 
 .container vscode-divider {
-  border-top-color: var(--progress-background);
-  opacity: 0.8;
+  border-top-color: var(--checkbox-border);
 }
 
 .banner {
@@ -39,6 +41,7 @@ a:focus {
   object-fit: contain;
   filter: brightness(1.2);
 }
+
 .drive-info {
   font-family: var(--vscode-editor-font-family);
   font-size: 1em;
@@ -46,14 +49,17 @@ a:focus {
   font-weight: bold;
   margin-bottom: -1em;
 }
+
 .drive-info .shift-state {
   margin: 2px;
   color: var(--progress-background);
   opacity: 0.5;
 }
+
 .drive-info .shift-state.enable {
   opacity: 1;
 }
+
 .state-info {
   position: relative;
   font-weight: bold;
@@ -62,14 +68,16 @@ a:focus {
   margin: -25px 0 15px 0;
 }
 
-.state-info > span {
+.state-info>span {
   width: calc((100% - 8px) / 3);
   display: inline-grid;
   cursor: pointer;
 }
+
 .shortcuts {
   margin: 0;
 }
+
 .shortcuts .shortcut {
   width: calc((100% - 11px) / 4);
   min-width: 48px;
@@ -80,6 +88,7 @@ a:focus {
 body.vscode-high-contrast vscode-button {
   background: var(--button-border);
 }
+
 body.vscode-high-contrast vscode-button[appearance="secondary"],
 body.vscode-high-contrast vscode-button[appearance="icon"] {
   background: inherit;
@@ -89,9 +98,11 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   from {
     background-color: var(--button-secondary-background);
   }
+
   50% {
     background-color: var(--button-primary-background);
   }
+
   to {
     background-color: var(--button-secondary-background);
   }
@@ -167,6 +178,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .vscode-dark .map {
   filter: invert(1) hue-rotate(180deg);
 }
+
 .bm_bottomLeftOverlay {
   display: none;
 }
@@ -187,6 +199,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   .control-view-content .shortcut .material-symbols-rounded {
     margin-right: 0;
   }
+
   .control-view-content .shortcut .label {
     display: none;
   }
@@ -196,21 +209,24 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   height: 100%;
   padding: 0 0px;
 }
-.control-view-content > div {
+
+.control-view-content>div {
   width: 100%;
 }
-.control-view-content.control-view-location > div,
-.control-view-content.control-view-action > div,
-.control-view-content.control-view-climate > div {
+
+.control-view-content.control-view-location>div,
+.control-view-content.control-view-action>div,
+.control-view-content.control-view-climate>div {
   display: grid;
   grid-template-rows: auto max-content;
 }
 
-.tpms_pressure > div {
+.tpms_pressure>div {
   position: absolute;
   width: 60px;
   text-align: center;
 }
+
 .tpms_pressure .fl {
   top: 20%;
   left: calc(50% - 140px);
@@ -234,14 +250,17 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .model .action-list {
   max-width: 360px;
 }
+
 .model .action-list vscode-button {
   border-radius: 5px;
   width: 31%;
   margin-right: 2%;
 }
+
 .model .action-list vscode-button:last-child {
   margin-right: 0%;
 }
+
 .model .action-btn {
   display: block;
   position: absolute;
@@ -261,10 +280,12 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   top: calc(90% - 15px);
   left: calc(50% - 15px);
 }
+
 .model .action-btn.charger {
   top: calc(80% - 15px);
   left: 8%;
 }
+
 .model .action-btn .material-symbols-rounded {
   font-size: 1.6em;
   color: var(--progress-background);
@@ -272,6 +293,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   width: fit-content;
   height: fit-content;
 }
+
 .model .above-view-model {
   aspect-ratio: 9/20;
   position: relative;
@@ -280,6 +302,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   top: 50%;
   transform: translateY(-50%);
 }
+
 .model .above-view-model:before {
   content: "";
   display: block;
@@ -293,36 +316,35 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   background-position: center center;
   z-index: -1;
 }
+
 .model.scaled {
   display: grid;
   grid-template-rows: max-content auto;
 }
+
 .model.scaled .above-view-model {
   overflow: hidden;
   aspect-ratio: 14/20;
   height: calc(43vh - 82px);
-  mask-image: linear-gradient(
-    left top,
-    left bottom,
-    color-stop(0%, rgba(0, 0, 0, 0)),
-    color-stop(10%, rgba(0, 0, 0, 1)),
-    color-stop(80%, rgba(0, 0, 0, 1)),
-    color-stop(100%, rgba(0, 0, 0, 0))
-  );
-  -webkit-mask-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0%, rgba(0, 0, 0, 0)),
-    color-stop(10%, rgba(0, 0, 0, 1)),
-    color-stop(80%, rgba(0, 0, 0, 1)),
-    color-stop(100%, rgba(0, 0, 0, 0))
-  );
+  mask-image: linear-gradient(left top,
+      left bottom,
+      color-stop(0%, rgba(0, 0, 0, 0)),
+      color-stop(10%, rgba(0, 0, 0, 1)),
+      color-stop(80%, rgba(0, 0, 0, 1)),
+      color-stop(100%, rgba(0, 0, 0, 0)));
+  -webkit-mask-image: -webkit-gradient(linear,
+      left top,
+      left bottom,
+      color-stop(0%, rgba(0, 0, 0, 0)),
+      color-stop(10%, rgba(0, 0, 0, 1)),
+      color-stop(80%, rgba(0, 0, 0, 1)),
+      color-stop(100%, rgba(0, 0, 0, 0)));
 }
 
 .model.scaled .above-view-model:before {
   transform: scale(1.3) translateY(-8%);
 }
+
 .steering {
   display: block;
   position: absolute;
@@ -332,38 +354,47 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   top: calc(15% + 15px);
   left: calc(50% - 55px);
 }
+
 .model .steering-heater {
   top: 15%;
   left: calc(35% - 15px);
   border-radius: 50%;
   transform: scale(1.1) rotateX(45deg);
 }
+
 .RightHand .steering {
   left: calc(50% + 15px);
 }
+
 .RightHand .steering-heater {
   left: calc(65% - 15px);
 }
+
 .heater {
   position: absolute;
   box-shadow: 0 0 4px #ddd8;
 }
+
 .heater.fl {
   top: 30%;
   left: calc(35% - 15px);
 }
+
 .heater.fr {
   top: 30%;
   left: calc(65% - 15px);
 }
+
 .heater.rl {
   top: 60%;
   left: calc(35% - 15px);
 }
+
 .heater.rm {
   top: 60%;
   left: calc(50% - 15px);
 }
+
 .heater.rr {
   top: 60%;
   left: calc(65% - 15px);
@@ -385,12 +416,15 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   justify-content: center;
   margin: 0px 0 15px 0;
 }
+
 .temp_control vscode-button.left {
   margin-left: 12px;
 }
+
 .temp_control vscode-button.right {
   margin-right: 12px;
 }
+
 .temp_control vscode-tag {
   width: 40px;
   text-align: center;
@@ -399,6 +433,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
 .charge-state {
   margin-top: 20px;
 }
+
 .charge-progress {
   height: 35px;
   margin-left: 36px;
@@ -407,6 +442,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   border: 2px solid var(--progress-background);
   border-radius: 2px;
 }
+
 .control-view-charge .charger {
   position: absolute;
   cursor: pointer;
@@ -414,9 +450,11 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   line-height: 39px;
   color: var(--progress-background);
 }
+
 .control-view-charge .charger.Disconnected {
   color: var(--progress-background);
 }
+
 .control-view-charge .charger:after {
   content: "";
   position: absolute;
@@ -427,32 +465,35 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   border-top: 2px solid;
   border-bottom: 2px dotted;
 }
+
 .charge-progress .meter {
   height: 35px;
   background-color: var(--progress-background);
   opacity: 0.6;
   pointer-events: none;
 }
+
 @keyframes charging-battery {
   from {
     background-position-x: 100%;
   }
+
   to {
     background-position-x: 0%;
   }
 }
+
 .charge-progress .meter.Charging {
   animation: charging-battery;
   animation-duration: 2.5s;
   animation-iteration-count: infinite;
-  background: linear-gradient(
-    90deg,
-    var(--progress-background) 40%,
-    var(--background) 50%,
-    var(--progress-background) 60%
-  );
+  background: linear-gradient(90deg,
+      var(--progress-background) 40%,
+      var(--background) 50%,
+      var(--progress-background) 60%);
   background-size: 300% 100%;
 }
+
 .charge-progress .meter:before {
   content: attr(data-value) "%";
   color: var(--background);
@@ -462,6 +503,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   text-align: center;
   position: absolute;
 }
+
 .charge-progress:before {
   content: "";
   height: 15px;
@@ -473,6 +515,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   margin-right: -12px;
   margin-top: 8px;
 }
+
 .charge-limit-set {
   width: calc(100% - 88px);
   -webkit-appearance: none;
@@ -483,9 +526,11 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   outline: none;
   z-index: 999;
 }
+
 .charge-limit-set:focus {
   outline: none;
 }
+
 .charge-limit-set::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -496,6 +541,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   opacity: 0.8;
   cursor: pointer;
 }
+
 .battery-limit-label {
   position: absolute;
   right: 6px;
@@ -506,6 +552,7 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   border-bottom: 5px solid;
   border-radius: 8px;
 }
+
 .charge-info {
   margin: 5px 0 0 34px;
   width: calc(100% - 84px);
@@ -522,28 +569,33 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   vertical-align: top;
   margin: 0 8px;
 }
+
 .switcher .toggle {
   opacity: 0.6;
   float: right;
   margin: -4px 4px 0 0;
   font-size: 2em;
 }
+
 .switcher .toggle.enable {
   color: var(--progress-background);
   text-shadow: 0 0 1px var(--progress-background);
   opacity: 1;
 }
+
 .footer-grid vscode-data-grid-cell {
   font-size: 0.8em;
   font-family: var(--vscode-editor-font-family);
   opacity: 0.6;
 }
+
 .update {
   display: inline-flex;
   align-items: center;
   width: 100%;
 }
-.update > span {
+
+.update>span {
   padding: 4px;
   border-radius: 50%;
   cursor: pointer;
@@ -551,9 +603,11 @@ body.vscode-high-contrast vscode-button[appearance="icon"] {
   color: var(--button-primary-foreground);
   background: var(--button-primary-background);
 }
-body.vscode-high-contrast .update > span {
+
+body.vscode-high-contrast .update>span {
   background: var(--button-border);
 }
+
 .update .progressbar {
   margin-left: -3px;
   width: 100%;
@@ -562,15 +616,18 @@ body.vscode-high-contrast .update > span {
   border-radius: 3px;
   padding: 0;
 }
+
 body.vscode-high-contrast .update .progressbar {
   border: 1px solid var(--button-border);
 }
-.update .progressbar > div {
+
+.update .progressbar>div {
   background-color: var(--button-primary-background);
   height: 10px;
   border-radius: 0 3px 3px 0;
 }
-body.vscode-high-contrast .update .progressbar > div {
+
+body.vscode-high-contrast .update .progressbar>div {
   background: var(--button-border);
 }
 
@@ -591,6 +648,7 @@ vscode-data-grid-cell:focus {
   outline: none;
   border-color: transparent;
 }
+
 vscode-data-grid-cell {
   padding: 0;
   margin: 0;

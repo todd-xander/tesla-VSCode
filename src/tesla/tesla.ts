@@ -305,7 +305,8 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     if (model[0] === 'my') {
       view = 'STUD_3QTR';
     }
-    let cs = `${subtype[0]},${color[0]},${wheel[0]},${spoiler[0]},${interior[0]}`;
+    let cfg = [subtype[0], color[0], wheel[0], spoiler[0], interior[0]];
+    let cs = cfg.filter((v, i, a) => { return !!v; }).join(',');
     const image = `https://static-assets.tesla.com/configurator/compositor?&options=${cs}&view=${view}&model=${model[0]}&size=400&bkba_opt=1`;
 
     if (vehicle.state === 'asleep' || vehicle.state === 'offline') {
