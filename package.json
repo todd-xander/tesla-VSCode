@@ -13,7 +13,7 @@
     "url": "https://github.com/todd-xander/tesla-VSCode/issues",
     "email": "tod.xander@gmail.com"
   },
-  "version": "0.2.1",
+  "version": "0.2.2",
   "preview": true,
   "icon": "media/tesla.png",
   "engines": {
@@ -30,7 +30,7 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands":[
+    "commands": [
       {
         "command": "tesla.cmd.froze",
         "category": "Tesla",
@@ -92,7 +92,7 @@
     "axios": "^0.21.4",
     "crypto": "^1.0.1",
     "teslajs": "^4.10.0",
-    "bufferutil":"^4.0.6",
+    "bufferutil": "^4.0.6",
     "utf-8-validate": "^5.0.2",
     "util": "^0.12.4",
     "ws": "^7.0.0"
