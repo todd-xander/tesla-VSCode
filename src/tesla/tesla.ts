@@ -22,6 +22,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
   private frozen: boolean;
   private extension: vscode.ExtensionContext;
   private token?: string;
+  private authMethod: 'tesla' | 'github' = 'tesla';
   public static readonly viewType = 'tesla.view';
 
   static register(context: vscode.ExtensionContext) {
@@ -43,11 +44,20 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
       this.token = token;
     });
     _context.subscriptions.push(
+      vscode.commands.registerCommand('tesla.cmd.chooseAuthMethod', () => {
+        vscode.window.showQuickPick(['tesla', 'github']).then((method) => {
+          if (method) {
+            this.authMethod = method;
+          }
+        });
+      }),
+    );
+    _context.subscriptions.push(
       vscode.commands.registerCommand('tesla.cmd.froze', () => {
         if (!this.view) { return; }
         this.frozen = true;
         vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', this.frozen);
-        this.frozenPage();
+        this.authMethod === 'tesla' ? this.frozenPage() : this.githubFrozenPage();
       }),
     );
     _context.subscriptions.push(
@@ -56,12 +66,12 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
           this.token = undefined;
           this.frozen = true;
           vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', this.frozen);
-          this.loginPage();
+          this.authMethod === 'tesla' ? this.loginPage() : this.githubLoginPage();
         });
-
       }),
     );
   }
+
   private loginPage() {
     if (!this.view) {
       return;
@@ -69,12 +79,29 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
     this.view.postMessage({ command: 'login', baseUrl });
   }
+
+  private githubLoginPage() {
+    if (!this.view) {
+      return;
+    }
+    const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
+    this.view.postMessage({ command: 'githubLogin', baseUrl });
+  }
+
   private frozenPage() {
     if (!this.view) {
       return;
     }
     const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
     this.view.postMessage({ command: 'froze', baseUrl });
+  }
+
+  private githubFrozenPage() {
+    if (!this.view) {
+      return;
+    }
+    const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
+    this.view.postMessage({ command: 'githubFroze', baseUrl });
   }
 
   private optionCodesToCarType(codes: String[]): String[] {
@@ -263,18 +290,6 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
       if (v === 'INBTB') { return [v, "Multi-Pattern Black Interior"]; }
       if (v === 'INFBP') { return [v, "Black Premium Interior"]; }
       if (v === 'INLPC') { return [v, "Cream Interior"]; }
-      if (v === 'INLPP') { return [v, "Black / Light Headliner Interior"]; }
-      if (v === 'INWPT') { return [v, "Tan Interior"]; }
-      if (v === 'INYPB') { return [v, "All Black Premium Interior"]; }
-      if (v === 'INYPW') { return [v, "Black and White Premium Interior"]; }
-      if (v === 'IPB0') { return [v, "Black Interior"]; }
-      if (v === 'IPB1') { return [v, "Black Interior"]; }
-      if (v === 'IPW0') { return [v, "White Interior"]; }
-      if (v === 'IPW1') { return [v, "white Interior"]; }
-      if (v === 'IVBPP') { return [v, "All Black Interior"]; }
-      if (v === 'IVBSW') { return [v, "Ultra White Interior"]; }
-      if (v === 'IVBTB') { return [v, "All Black Interior"]; }
-      if (v === 'IVLPC') { return [v, "Vegan Cream Interior"]; }
     }
     return ["", ""];
   }
