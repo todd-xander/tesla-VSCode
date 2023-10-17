@@ -387,7 +387,7 @@ function buildControlPanels(controlView, vv) {
         >
           <span class="material-symbols-rounded">sensor_window</span>
         </vscode-button>
-        <vscode-button class="action-btn trunk" appearance="icon" title="Open Frunk"><span class="material-symbols-rounded">luggage</span></vscode-button>
+        <vscode-button class="action-btn trunk" appearance="icon" title="Open Frunk"><span class='material-symbols-rounded'>luggage</span></vscode-button>
         <vscode-button class="action-btn charger" appearance="icon"><span class="material-symbols-rounded">settings_input_svideo</span></vscode-button>
         <div class="tpms_pressure"
              style="${p_fl || p_fr || p_rl || p_rr || "display:none;"}"
@@ -846,6 +846,15 @@ window.addEventListener("message", (event) => {
       buildContent(view, message.data);
       break;
     }
+    case 'githubLogin':
+      // Handle GitHub login
+      break;
+    case 'githubFroze':
+      // Handle GitHub froze
+      break;
+    default:
+      // Handle other commands
+      break;
   }
 });
 
