@@ -22,6 +22,7 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
   private frozen: boolean;
   private extension: vscode.ExtensionContext;
   private token?: string;
+  private authMethod: 'tesla' | 'github' = 'tesla';
   public static readonly viewType = 'tesla.view';
 
   static register(context: vscode.ExtensionContext) {
@@ -43,11 +44,20 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
       this.token = token;
     });
     _context.subscriptions.push(
+      vscode.commands.registerCommand('tesla.cmd.chooseAuthMethod', () => {
+        vscode.window.showQuickPick(['tesla', 'github']).then((method) => {
+          if (method) {
+            this.authMethod = method;
+          }
+        });
+      }),
+    );
+    _context.subscriptions.push(
       vscode.commands.registerCommand('tesla.cmd.froze', () => {
         if (!this.view) { return; }
         this.frozen = true;
         vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', this.frozen);
-        this.frozenPage();
+        this.authMethod === 'tesla' ? this.frozenPage() : this.githubFrozenPage();
       }),
     );
     _context.subscriptions.push(
@@ -56,12 +66,12 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
           this.token = undefined;
           this.frozen = true;
           vscode.commands.executeCommand('setContext', 'tesla.ctx.frozen', this.frozen);
-          this.loginPage();
+          this.authMethod === 'tesla' ? this.loginPage() : this.githubLoginPage();
         });
-
       }),
     );
   }
+
   private loginPage() {
     if (!this.view) {
       return;
@@ -69,12 +79,29 @@ export class TeslaSidebarProvider implements vscode.WebviewViewProvider {
     const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
     this.view.postMessage({ command: 'login', baseUrl });
   }
+
+  private githubLoginPage() {
+    if (!this.view) {
+      return;
+    }
+    const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
+    this.view.postMessage({ command: 'githubLogin', baseUrl });
+  }
+
   private frozenPage() {
     if (!this.view) {
       return;
     }
     const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
     this.view.postMessage({ command: 'froze', baseUrl });
+  }
+
+  private githubFrozenPage() {
+    if (!this.view) {
+      return;
+    }
+    const baseUrl = this.view?.asWebviewUri(this.extension.extensionUri).path;
+    this.view.postMessage({ command: 'githubFroze', baseUrl });
   }
 
   private optionCodesToCarType(codes: String[]): String[] {
